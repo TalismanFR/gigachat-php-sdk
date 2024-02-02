@@ -1,0 +1,29 @@
+{
+    "name": "edvardpotter/gigachat-php-sdk",
+    "description": "GigaChat API SDK for PHP projects",
+    "keywords": [
+        "gigachat",
+        "gigachat php",
+        "gigachat php api",
+        "gigachat sdk",
+        "gigachat sdk php",
+        "gigachat api client"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Edvardpotter\\GigaChat\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "edvardpotter",
+            "email": "eduard1997@bk.ru"
+        }
+    ],
+    "require": {
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.0"
+    }
+}
