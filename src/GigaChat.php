@@ -58,6 +58,9 @@ class GigaChat
         }, $this->json($response)['data']);
     }
 
+    /**
+     * @param Message[] $messages
+     */
     public function chatCompletions(
         array  $messages = [],
         string $model = Model::ID_GIGACHAT_LATEST,
@@ -70,10 +73,6 @@ class GigaChat
         int    $updateInterval = 0
     ): Completion
     {
-        $messages = array_map(function (Message $messageType) {
-            return $messageType->toArray();
-        }, $messages);
-
         $response = $this->client->sendRequest(
             new Request(
                 'POST',
@@ -83,7 +82,9 @@ class GigaChat
                 ],
                 json_encode([
                     'model' => $model,
-                    'messages' => $messages,
+                    'messages' => array_map(function (Message $message) {
+                        return $message->toArray();
+                    }, $messages),
                     'temperature' => $temperature,
                     'top_p' => $topP,
                     'n' => $n,
