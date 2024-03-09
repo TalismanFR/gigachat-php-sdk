@@ -22,7 +22,7 @@ class GigaChat
 
     public function __construct(
         string           $authToken,
-        string           $cert,
+                         $cert,
         ?ClientInterface $client = null
     )
     {
@@ -33,6 +33,8 @@ class GigaChat
                 'base_uri' => Url::GIGACHAT_API_URL,
                 RequestOptions::VERIFY => $cert,
             ]);
+        } else {
+            $this->client = $client;
         }
     }
 

@@ -34,6 +34,8 @@ class GigaChatOAuth
                 'base_uri' => Url::OAUTH_API_URL,
                 RequestOptions::VERIFY => $cert,
             ]);
+        } else {
+            $this->client = $client;
         }
     }
 
