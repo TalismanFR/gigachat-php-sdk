@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -45,7 +46,7 @@ class GigaChat
      */
     public function getModels(): array
     {
-        $response = $this->client->sendRequest(
+        $response = $this->sendRequest(
             new Request(
                 'GET',
                 'models',
@@ -75,7 +76,7 @@ class GigaChat
         int    $updateInterval = 0
     ): Completion
     {
-        $response = $this->client->sendRequest(
+        $response = $this->sendRequest(
             new Request(
                 'POST',
                 'chat/completions',
@@ -103,7 +104,7 @@ class GigaChat
 
     public function getFile(string $fileId): StreamInterface
     {
-        $response = $this->client->sendRequest(
+        $response = $this->sendRequest(
             new Request(
                 'GET',
                 'files/' . $fileId . '/content',
@@ -124,7 +125,7 @@ class GigaChat
         string $model = 'Embeddings'
     ): array
     {
-        $response = $this->client->sendRequest(
+        $response = $this->sendRequest(
             new Request(
                 'POST',
                 'embeddings',
@@ -146,7 +147,7 @@ class GigaChat
         string $input
     ): TokensCount
     {
-        $response = $this->client->sendRequest(
+        $response = $this->sendRequest(
             new Request(
                 'POST',
                 'tokens/count',
@@ -168,5 +169,28 @@ class GigaChat
         $body = (string)$response->getBody();
 
         return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @param RequestInterface $request
+     *
+     * @return ResponseInterface
+     *
+     * @throws \RuntimeException
+     */
+    protected function sendRequest(RequestInterface $request): ResponseInterface
+    {
+        try {
+            $response = $this->client->sendRequest($request);
+        }
+        catch (\Throwable $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
+        if ($response->getStatusCode() !== 200) {
+            $message = 'HTTP Status Code: ' . $response->getStatusCode() . '. Response Body: ' . $response->getBody();
+            throw new \RuntimeException($message);
+        }
+
+        return $response;
     }
 }
