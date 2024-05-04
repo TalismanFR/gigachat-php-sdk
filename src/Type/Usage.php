@@ -49,7 +49,7 @@ class Usage implements ArrayConverterInterface
             $array['prompt_tokens'],
             $array['completion_tokens'],
             $array['total_tokens'],
-            $array['system_tokens']
+            $array['system_tokens'] ?? 0,
         );
     }
 }
