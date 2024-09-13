@@ -62,8 +62,8 @@ final class Model implements ArrayConverterInterface, \JsonSerializable
         );
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): string
     {
-        return get_object_vars($this);
+        return $this->id;
     }
 }

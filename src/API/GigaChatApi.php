@@ -11,11 +11,13 @@ use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\Uuid;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
+use Talismanfr\GigaChat\Domain\Entity\Dialog;
 use Talismanfr\GigaChat\Url;
 
 final class GigaChatApi implements GigaChatApiInterface
 {
     private const URL_MODELS = 'models';
+    private const URL_CAHT_COMPLETION = 'chat/completions';
 
     public function __construct(
         private GigaChatOAuthInterface $auth,
@@ -44,6 +46,17 @@ final class GigaChatApi implements GigaChatApiInterface
             new Request('GET', self::URL_MODELS, [
                 'Authorization' => 'Bearer ' . $this->auth->getAccessToken(Uuid::uuid4())->getAccessToken()
             ],
+            )
+        );
+    }
+
+    public function completions(Dialog $dialog): ResponseInterface
+    {
+        return $this->client->sendRequest(
+            new Request('POST', self::URL_CAHT_COMPLETION, [
+                'Authorization' => 'Bearer ' . $this->auth->getAccessToken(Uuid::uuid4())->getAccessToken()
+            ],
+                json_encode($dialog, JSON_UNESCAPED_UNICODE)
             )
         );
     }

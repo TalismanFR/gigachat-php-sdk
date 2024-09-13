@@ -6,9 +6,12 @@ namespace Talismanfr\Tests\Integration\Service\Service;
 use PHPUnit\Framework\TestCase;
 use Talismanfr\GigaChat\API\Auth\GigaChatOAuth;
 use Talismanfr\GigaChat\API\GigaChatApi;
+use Talismanfr\GigaChat\Domain\VO\Message;
 use Talismanfr\GigaChat\Domain\VO\Model;
 use Talismanfr\GigaChat\Domain\VO\Models;
+use Talismanfr\GigaChat\Domain\VO\Role;
 use Talismanfr\GigaChat\Domain\VO\Scope;
+use Talismanfr\GigaChat\Factory\DialogFactory;
 use Talismanfr\GigaChat\Mapper\GigaChatMapper;
 use Talismanfr\GigaChat\Service\GigaChatService;
 
@@ -41,6 +44,21 @@ class GigaChatServiceTest extends TestCase
         self::assertInstanceOf(Model::class, $model);
         self::assertStringStartsWith('GigaChat', $model->getId());
         self::assertNotEmpty($model->getOwnedBy());
-        self::assertEquals($model->getObject(), 'model');
+        self::assertEquals('model', $model->getObject());
+    }
+
+    /**
+     * @depends test__construct
+     */
+    public function testCompletions(GigaChatService $service)
+    {
+        $factory = new DialogFactory();
+        $dialog = $factory->dialogBase('Ты эксперт в футболе.', 'Сколько должно быть игроков на поле?', Model::createGigaChatPlus());
+        $service->completions($dialog);
+        self::assertCount(3, $dialog->getMessages()->getMessages());
+        $dialog->addMessage(new Message(0, 'Может быть что на поле меньше игроков?', Role::USER));
+        $service->completions($dialog);
+        self::assertCount(5, $dialog->getMessages()->getMessages());
+        echo json_encode($dialog, JSON_UNESCAPED_UNICODE);
     }
 }

@@ -31,7 +31,8 @@
         "ext-json": "*",
         "ext-intl": "*",
         "guzzlehttp/guzzle": "^7.9.0",
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {
         "maglnet/composer-require-checker": "^4.7",
