@@ -1,18 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Talismanfr\GigaChat\Type;
+namespace Talismanfr\GigaChat\Domain\VO;
 
-final class Model implements ArrayConverterInterface
+use Talismanfr\GigaChat\Type\ArrayConverterInterface;
+
+final class Model implements ArrayConverterInterface, \JsonSerializable
 {
     public const ID_GIGACHAT = 'GigaChat';
     public const ID_GIGACHAT_PRO = 'GigaChat-Pro';
     public const ID_GIGACHAT_PLUS = 'GigaChat-Plus';
-    public const ID_GIGACHAT_LATEST = 'GigaChat:latest';
 
     private string $id;
     private string $object;
     private string $ownedBy;
+
+    private const DEFAULT_OWNED = 'salutedevices';
 
     public function __construct(
         string $id,
@@ -23,6 +26,16 @@ final class Model implements ArrayConverterInterface
         $this->id = $id;
         $this->object = $object;
         $this->ownedBy = $ownedBy;
+    }
+
+    public static function createGigaChatPro(): self
+    {
+        return new self(self::ID_GIGACHAT_PRO, 'model', self::DEFAULT_OWNED);
+    }
+
+    public static function createGigaChatPlus(): self
+    {
+        return new self(self::ID_GIGACHAT_PLUS, 'model', self::DEFAULT_OWNED);
     }
 
     public function getId(): string
@@ -47,5 +60,10 @@ final class Model implements ArrayConverterInterface
             $array['object'],
             $array['owned_by']
         );
+    }
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 }
