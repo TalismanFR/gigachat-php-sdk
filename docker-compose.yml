@@ -1,0 +1,10 @@
+version: '3'
+services:
+  php-cli:
+    working_dir: /app
+    build:
+      context: docker/php/cli
+    command: bash -c "composer install"
+    restart: on-failure
+    volumes:
+      - ./:/app

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Edvardpotter\GigaChat\Type;
+namespace Talismanfr\GigaChat\Type;
 
 class Model implements ArrayConverterInterface
 {

@@ -1,27 +1,39 @@
 <?php
 declare(strict_types=1);
 
-namespace Edvardpotter\GigaChat;
+namespace Talismanfr\GigaChat\API\Auth;
 
-use Edvardpotter\GigaChat\Type\AccessToken;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Ramsey\Uuid\UuidInterface;
+use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
+use Talismanfr\GigaChat\Domain\VO\Scope;
+use Talismanfr\GigaChat\Exception\ErrorGetAccessTokenException;
+use Talismanfr\GigaChat\Type\AccessToken;
+use Talismanfr\GigaChat\Url;
 
-class GigaChatOAuth
+final class GigaChatOAuth implements GigaChatOAuthInterface
 {
     private string $clientId;
     private string $clientSecret;
-    private string $scope;
+    private Scope $scope;
     private ?ClientInterface $client = null;
 
+    /**
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param bool $cert false=Отключить валидацию сертификата в https запросах
+     * @param Scope $scope
+     * @param ClientInterface|null $client
+     */
     public function __construct(
         string           $clientId,
         string           $clientSecret,
-                         $cert,
-        string           $scope = 'GIGACHAT_API_PERS',
+        bool             $cert = true,
+        Scope            $scope = Scope::GIGACHAT_API_PERS,
         ?ClientInterface $client = null
     )
     {
@@ -33,36 +45,45 @@ class GigaChatOAuth
             $this->client = new Client([
                 'base_uri' => Url::OAUTH_API_URL,
                 RequestOptions::VERIFY => $cert,
+                RequestOptions::HTTP_ERRORS => false
             ]);
         } else {
             $this->client = $client;
         }
     }
 
-    public function getAccessToken(?string $rqUID = null): AccessToken
+    /**
+     * @throws ErrorGetAccessTokenException
+     * @throws \JsonException
+     */
+    public function getAccessToken(?UuidInterface $rqUID = null): AccessToken
     {
         if ($rqUID === null) {
-            $rqUID = Uuid::uuid4();
+            $rqUID = \Ramsey\Uuid\Uuid::uuid4();
         }
 
-        $response = $this->client->sendAsync(
+        $response = $this->client->send(
             new Request(
                 'POST',
                 'oauth',
                 [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                     'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret),
-                    'RqUID' => $rqUID,
+                    'RqUID' => $rqUID->toString(),
                 ],
                 http_build_query(
                     [
-                        'scope' => $this->scope,
+                        'scope' => $this->scope->value,
                     ],
                     '',
                     '&'
                 ),
             )
-        )->wait();
+        );
+
+        if ($response->getStatusCode() !== 200) {
+            throw new ErrorGetAccessTokenException($response, 'Error while getting access token', $response->getStatusCode());
+        }
 
         return AccessToken::createFromArray($this->json($response));
     }

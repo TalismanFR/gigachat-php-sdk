@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Edvardpotter\GigaChat;
+namespace Talismanfr\GigaChat;
 
-use Edvardpotter\GigaChat\Type\Message;
-use Edvardpotter\GigaChat\Type\Model;
+use Talismanfr\GigaChat\Type\Message;
+use Talismanfr\GigaChat\Type\Model;
 
 class GigaChatDialog
 {

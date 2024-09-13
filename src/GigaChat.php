@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Edvardpotter\GigaChat;
+namespace Talismanfr\GigaChat;
 
-use Edvardpotter\GigaChat\Type\Completion;
-use Edvardpotter\GigaChat\Type\Message;
-use Edvardpotter\GigaChat\Type\Model;
-use Edvardpotter\GigaChat\Type\TokensCount;
+use Talismanfr\GigaChat\Type\Completion;
+use Talismanfr\GigaChat\Type\Message;
+use Talismanfr\GigaChat\Type\Model;
+use Talismanfr\GigaChat\Type\TokensCount;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;

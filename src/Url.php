@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Edvardpotter\GigaChat;
+namespace Talismanfr\GigaChat;
 
-class Url
+final class Url
 {
     public const OAUTH_HOST = 'https://ngw.devices.sberbank.ru:9443/api';
     public const OAUTH_API_VERSION = 'v2';

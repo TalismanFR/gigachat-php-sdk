@@ -1,7 +1,5 @@
 # GigaChat PHP SDK
 
-[![Latest Stable Version](http://poser.pugx.org/edvardpotter/gigachat-php-sdk/v)](https://packagist.org/packages/edvardpotter/gigachat-php-sdk) [![Total Downloads](http://poser.pugx.org/edvardpotter/gigachat-php-sdk/downloads)](https://packagist.org/packages/edvardpotter/gigachat-php-sdk) [![Latest Unstable Version](http://poser.pugx.org/edvardpotter/gigachat-php-sdk/v/unstable)](https://packagist.org/packages/edvardpotter/gigachat-php-sdk) [![License](http://poser.pugx.org/edvardpotter/gigachat-php-sdk/license)](https://packagist.org/packages/edvardpotter/gigachat-php-sdk) [![PHP Version Require](http://poser.pugx.org/edvardpotter/gigachat-php-sdk/require/php)](https://packagist.org/packages/edvardpotter/gigachat-php-sdk)
-
 PHP API SDK для [GigaChat](https://developers.sber.ru/docs/ru/gigachat/overview/).
 
 ## Установка
@@ -9,12 +7,12 @@ PHP API SDK для [GigaChat](https://developers.sber.ru/docs/ru/gigachat/overvi
 Установите последнюю версию
 
 ```bash
-$ composer require edvardpotter/gigachat-php-sdk
+$ composer require talismanfr/gigachat-php-sdk
 ```
 
 ## Требования
 
-PHP >= 7.4
+PHP >= 8.3
 
 ## Как использовать
 
