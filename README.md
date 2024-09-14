@@ -131,6 +131,159 @@ echo json_encode($dialog);
   "repetition_penalty": 1
 }
 ```
+### Использование функций
+```php
+$factory = new DialogFactory();
+$auth = new GigaChatOAuth(
+            'CLIENT_ID',
+            'SECRET_ID',
+            false, // отключаем валидацию https
+            Scope::GIGACHAT_API_PERS
+        );
+// создаем экземпляр АПИ
+$api = new GigaChatApi($auth);
+// создаем экзепляр сервиса для работы с апи GigaChat
+$service = new GigaChatService($api, new GigaChatMapper());
+// формируем стартовый диалог
+$messages = [
+            new Message(0, 'Ты эксперт в футболе.', Role::SYSTEM, null),
+        ];
+// при создания объета диалога можно указать температуру, top_p, а так же зарегистрировать функции
+$dialog = Dialog(
+    Model::createGigaChatPlus(),
+    new Messages(...$messages)
+);
+// Создаем объект функции и добавляем к диалогу
+$function = $factory->functionModel('player_number_name',
+            new FunctionParameters(
+                new FunctionProperties(
+                    new FunctionProperty('soccer_club_name', 'string', 'Название футбольного клуба', true),
+                    new FunctionProperty('player_number', 'integer', 'Номер игрока в футбольном клубе', true),
+                    new FunctionProperty('soccer_league_name', 'string', 'Название футбольной лиги', false, [
+                        'Российская Премьер-лига',
+                        'Первая лига',
+                        'Вторая лига',
+                    ]),
+                )
+            ),
+            'Возвращает фамилию имя и отчество игрока играющего в футбольном клубе под определенным номером',
+            [
+                new FewShotExample('Кто играет в зените под первым номером?', ['soccer_club_name' => 'Зенит', 'player_number' => 1])
+            ]
+        );
+$dialog->addFunction($function);
+$dialog->addMessage(new Message(0, 'Кто играет под десятым номером в металлурге-кузбасс?'));
+$result = $service->completions($dialog);
+
+// получаем последнее сообщение в диалоге и если это вызов функции
+// то buildFunctionResult вернет сообщение для ответа на функцию
+// так же можете получить объект Talismanfr\GigaChat\Domain\VO\FunctionCall из $result->choices[0]->message->function_call
+$message = $dialog->getMessages()->getLastMessage();
+$messageFunctionResponse = $message->buildFunctionResult(
+    json_encode(['player_number_name' => 'Всеволод Михайлович Бобров'], JSON_UNESCAPED_UNICODE)
+);
+// добавляем в диалог ответ на функцию и снова обращаемся к GPT
+$dialog->addMessage($messageFunctionResponse);
+
+$result = $service->completions($dialog);
+
+// новое сообщение уже содержит ответ от GPT с использованием ответа на нашу функцию
+$message = $dialog->getMessages()->getLastMessage();
+
+echo $message->getContent();
+// output: Под десятым номером в "Металлург-Кузбасс" играет Всеволод Михайлович Бобров.
+
+// Полная структура диалога в итоге будет выглядеть так
+echo json_encode($dialog);       
+```
+> output
+```json
+{
+	"model": "GigaChat-Plus",
+	"messages": [
+		{
+			"role": "user",
+			"content": "Кто играет под десятым номером в металлурге-кузбасс?",
+			"function_state_id": null,
+			"function_call": null,
+			"name": null
+		},
+		{
+			"role": "assistant",
+			"content": "",
+			"function_state_id": null,
+			"function_call": {
+				"name": "player_number_name",
+				"arguments": {
+					"player_number": 10,
+					"soccer_club_name": "Металлург-Кузбасс"
+				}
+			},
+			"name": null
+		},
+		{
+			"role": "function",
+			"content": "{\"player_number_name\":\"Всеволод Михайлович Бобров\"}",
+			"function_state_id": null,
+			"function_call": null,
+			"name": "player_number_name"
+		},
+		{
+			"role": "assistant",
+			"content": "Под десятым номером в \"Металлург-Кузбасс\" играет Всеволод Михайлович Бобров.",
+			"function_state_id": null,
+			"function_call": null,
+			"name": null
+		}
+	],
+	"temperature": 0.2,
+	"max_tokens": 1024,
+	"top_p": 0.1,
+	"repetition_penalty": 1,
+	"function_call": "auto",
+	"functions": [
+		{
+			"name": "player_number_name",
+			"parameters": {
+				"properties": {
+					"soccer_club_name": {
+						"type": "string",
+						"description": "Название футбольного клуба"
+					},
+					"player_number": {
+						"type": "integer",
+						"description": "Номер игрока в футбольном клубе"
+					},
+					"soccer_league_name": {
+						"type": "string",
+						"description": "Название футбольной лиги",
+						"enum": [
+							"Российская Премьер-лига",
+							"Первая лига",
+							"Вторая лига"
+						]
+					}
+				},
+				"type": "object",
+				"required": [
+					"soccer_club_name",
+					"player_number"
+				]
+			},
+			"description": "Возвращает фамилию имя и отчество игрока играющего в футбольном клубе под определенным номером",
+			"few_shot_examples": [
+				{
+					"request": "Кто играет в зените под первым номером?",
+					"params": {
+						"soccer_club_name": "Зенит",
+						"player_number": 1
+					}
+				}
+			]
+		}
+	]
+}
+```
 ## Tests
 Чтобы запустить интеграционные тесты укажите свои client_id и secret_id в 
 файле `phpunit.xml.dist`
