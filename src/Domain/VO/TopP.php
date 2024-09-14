@@ -14,6 +14,11 @@ final class TopP implements \JsonSerializable
         }
     }
 
+    public function getTopP(): float
+    {
+        return $this->topP;
+    }
+
     public function jsonSerialize(): float
     {
         return $this->topP;
