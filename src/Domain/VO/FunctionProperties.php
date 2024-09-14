@@ -22,6 +22,11 @@ final class FunctionProperties implements \JsonSerializable
         }
     }
 
+    public function getFunctionProperties(): array
+    {
+        return $this->functionProperties;
+    }
+
     public function getRequired(): ?array
     {
         return empty($this->required) ? null : $this->required;

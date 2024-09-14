@@ -23,6 +23,28 @@ final class FunctionModel implements \JsonSerializable
 
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getParameters(): FunctionParameters
+    {
+        return $this->parameters;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getFewShotExamples(): array
+    {
+        return $this->fewShotExamples;
+    }
+
+
+
     public function jsonSerialize(): array
     {
         $result = [
