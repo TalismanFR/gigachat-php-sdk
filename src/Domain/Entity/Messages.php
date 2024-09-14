@@ -24,6 +24,13 @@ final class Messages implements \JsonSerializable
         $this->messages[$this->maxOrder] = $message->withOrder($this->maxOrder);
     }
 
+    public function getLastMessage(): ?Message
+    {
+        $message = end($this->messages);
+        reset($this->messages);
+        return $message !== false ? $message : null;
+    }
+
     public function getMessages(): array
     {
         return $this->messages;

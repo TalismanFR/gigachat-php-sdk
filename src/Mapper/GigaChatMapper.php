@@ -5,6 +5,7 @@ namespace Talismanfr\GigaChat\Mapper;
 
 use Psr\Http\Message\ResponseInterface;
 use Talismanfr\GigaChat\Domain\VO\FinishReason;
+use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\Model;
 use Talismanfr\GigaChat\Domain\VO\Models;
 use Talismanfr\GigaChat\Domain\VO\Role;
@@ -31,13 +32,13 @@ class GigaChatMapper
         $data = json_decode($response->getBody()->__toString(), true);
         $choices = [];
         foreach ($data['choices'] ?? [] as $choice) {
-            //todo function call mapping
             $choices[] = new CompletionChoiceResponse(
                 new CompletionMessageResponse(Role::from($choice['message']['role']), $choice['message']['content'],
                     $choice['message']['functions_state_id'] ?? null,
-                    null),
+
+                    isset($choice['message']['function_call']) ? new FunctionCall($choice['message']['function_call']['name'], $choice['message']['function_call']['arguments']) : null),
                 $choice['index'],
-                FinishReason::from($choice['finish_reason'])
+                FinishReason::from($choice['finish_reason']),
             );
         }
         $created = new \DateTimeImmutable();

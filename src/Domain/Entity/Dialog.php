@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Talismanfr\GigaChat\Domain\Entity;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Talismanfr\GigaChat\Domain\VO\FunctionCall;
+use Talismanfr\GigaChat\Domain\VO\FunctionModel;
 use Talismanfr\GigaChat\Domain\VO\Message;
 use Talismanfr\GigaChat\Domain\VO\Model;
 use Talismanfr\GigaChat\Domain\VO\TopP;
@@ -21,6 +23,8 @@ final class Dialog implements \JsonSerializable
         private TopP                      $topP = new TopP(0.1),
         private int                       $maxTokens = 1024,
         private float                     $repetitionPenalty = 1,
+        private ?FunctionCall             $functionCall = null,
+        private ?Functions                $functions = null,
         private ?EventDispatcherInterface $eventDispatcher = null
     )
     {
@@ -35,11 +39,22 @@ final class Dialog implements \JsonSerializable
     public function processedCompletionResponse(CompletionResponse $response): void
     {
         foreach ($response->choices as $choice) {
-            //todo function_call
-            $newMessage = new Message(0, $choice->message->content, $choice->message->role, $choice->message->functions_state_id);
+            $newMessage = new Message(0, $choice->message->content, $choice->message->role, $choice->message->functions_state_id, $choice->message->function_call);
             $this->messages->addMessage($newMessage);
+
             $this->usage = $response->usage;
         }
+    }
+
+    public function addFunction(FunctionModel $functionModel): void
+    {
+        if (!$this->functionCall) {
+            $this->functionCall = FunctionCall::auto();
+        }
+        if (!$this->functions) {
+            $this->functions = new Functions();
+        }
+        $this->functions->addFunction($functionModel);
     }
 
     public function addMessage(Message $message): void
@@ -87,6 +102,16 @@ final class Dialog implements \JsonSerializable
         return $this->eventDispatcher;
     }
 
+    public function getFunctionCall(): ?FunctionCall
+    {
+        return $this->functionCall;
+    }
+
+    public function getFunctions(): ?Functions
+    {
+        return $this->functions;
+    }
+
     public function jsonSerialize(): mixed
     {
         return [
@@ -96,6 +121,8 @@ final class Dialog implements \JsonSerializable
             'max_tokens' => $this->maxTokens,
             'top_p' => $this->topP,
             'repetition_penalty' => $this->repetitionPenalty,
+            'function_call' => $this->functionCall,
+            'functions' => $this->functions
         ];
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Talismanfr\GigaChat\Service\Response;
 
+use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\Role;
 
 final class CompletionMessageResponse implements \JsonSerializable
@@ -11,7 +12,7 @@ final class CompletionMessageResponse implements \JsonSerializable
         readonly Role    $role,
         readonly string  $content,
         readonly ?string $functions_state_id,
-        readonly ?FunctionCallResponse $function_call
+        readonly ?FunctionCall $function_call
 
     )
     {
