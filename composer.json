@@ -40,7 +40,8 @@
         "rector/rector": "^1.0.3",
         "roave/infection-static-analysis-plugin": "^1.34",
         "spatie/phpunit-watcher": "^1.23",
-        "vimeo/psalm": "^5.16"
+        "vimeo/psalm": "^5.16",
+        "symfony/event-dispatcher": "^7.1"
     },
     "autoload-dev": {
         "psr-4": {

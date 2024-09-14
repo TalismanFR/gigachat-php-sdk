@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Talismanfr\GigaChat\Domain\Entity;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Talismanfr\GigaChat\Domain\Event\FunctionCallEvent;
 use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\FunctionModel;
 use Talismanfr\GigaChat\Domain\VO\Message;
@@ -43,6 +44,11 @@ final class Dialog implements \JsonSerializable
             $this->messages->addMessage($newMessage);
 
             $this->usage = $response->usage;
+
+            //send event function_call if EventDispatcher exist
+            if (isset($this->eventDispatcher) && $choice->message->function_call) {
+                $this->eventDispatcher->dispatch(new FunctionCallEvent($this, $this->messages->getLastMessage()));
+            }
         }
     }
 
@@ -55,6 +61,11 @@ final class Dialog implements \JsonSerializable
             $this->functions = new Functions();
         }
         $this->functions->addFunction($functionModel);
+    }
+
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function addMessage(Message $message): void

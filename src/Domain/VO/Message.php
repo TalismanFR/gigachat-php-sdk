@@ -21,6 +21,11 @@ final class Message implements \JsonSerializable
 
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
     public function getIndex(): int
     {
         return $this->index;

@@ -5,6 +5,7 @@ namespace Talismanfr\Tests\Unit\Service;
 
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
 use Talismanfr\GigaChat\Domain\VO\FinishReason;
@@ -19,6 +20,7 @@ use Talismanfr\GigaChat\Service\Response\CompletionChoiceResponse;
 use Talismanfr\GigaChat\Service\Response\CompletionMessageResponse;
 use Talismanfr\GigaChat\Service\Response\CompletionResponse;
 use Talismanfr\GigaChat\Type\AccessToken;
+use Talismanfr\Tests\Support\FunctionCallSubscriber;
 
 class GigaChatServiceTest extends TestCase
 {
@@ -30,6 +32,7 @@ class GigaChatServiceTest extends TestCase
         $api = $this->createStub(GigaChatApiInterface::class);
         $api->method('completions')->willReturnOnConsecutiveCalls(
             new Response(200, [], '{"choices":[{"message":{"content":"На поле должно быть 11 игроков от каждой команды.","role":"assistant"},"index":0,"finish_reason":"stop"}],"created":1726261876,"model":"GigaChat-Plus:3.1.25.3","object":"chat.completion","usage":{"prompt_tokens":24,"completion_tokens":13,"total_tokens":37}}'),
+            new Response(200, [], '{"choices":[{"message":{"content":"","role":"assistant","function_call":{"name":"player_number_name","arguments":{"player_number":3,"soccer_club_name":"Спартак","soccer_league_name":"Российская Премьер-лига"}}},"index":0,"finish_reason":"function_call"}],"created":1726317018,"model":"GigaChat-Plus:3.1.25.3","object":"chat.completion","usage":{"prompt_tokens":162,"completion_tokens":49,"total_tokens":211}}'),
             new Response(200, [], '{"choices":[{"message":{"content":"","role":"assistant","function_call":{"name":"player_number_name","arguments":{"player_number":3,"soccer_club_name":"Спартак","soccer_league_name":"Российская Премьер-лига"}}},"index":0,"finish_reason":"function_call"}],"created":1726317018,"model":"GigaChat-Plus:3.1.25.3","object":"chat.completion","usage":{"prompt_tokens":162,"completion_tokens":49,"total_tokens":211}}')
         );
 
@@ -77,5 +80,17 @@ class GigaChatServiceTest extends TestCase
         $responseFunctionMessage = $message->buildFunctionResult(json_encode(['player_number_name' => 'Всеволод Михайлович Бобров'], JSON_UNESCAPED_UNICODE));
         $dialog->addMessage($responseFunctionMessage);
         self::assertEquals(Role::FUNCTION, $responseFunctionMessage->getRole());
+
+
+        // test eventdisparcher
+        $ed = new EventDispatcher();
+        $dialog->setEventDispatcher($ed);
+        $ed->addSubscriber(new FunctionCallSubscriber());
+        $service->completions($dialog);
+
+        $message = $dialog->getMessages()->getLastMessage();
+        self::assertEquals(Role::FUNCTION, $message->getRole());
+        self::assertEquals('player_number_name',$message->getName());
+
     }
 }

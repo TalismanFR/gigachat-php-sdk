@@ -284,6 +284,49 @@ echo json_encode($dialog);
 	]
 }
 ```
+### Handler для автоматической обработки function_call
+Возможно использовать свои обработчики для каждого ответа GPT с `function_call`.
+В либе для этого используется `psr/event-dispatcher`.
+
+Если приходит ответ от GPT с запросом на вызов функции то при наличии `EventDispatcher` в объекте `Dialog` кидается событие
+`FunctionCallEvent`. На это событие можно подписаться любым удобным вам способом, тем самым обеспечив обработку функции.
+
+Ниже и в тестах приведен пример с использованием `symfony/event-dispatcher`.
+```php
+// ... previous build $dialog and functions property
+
+// передаем в диалог экземпляр EventDispatcher (это можно сделать и при создании диалог через конструктор)
+$ed = new EventDispatcher();
+$dialog->setEventDispatcher($ed);
+// добавляем к диспечеру событий обработчик
+$ed->addSubscriber(new FunctionCallSubscriber());
+// обращаемся к GPT
+$service->completions($dialog);
+// если gigachat вернул function_call то подписчик автоматически выполнится
+```
+> Код подписчика
+```php
+class FunctionCallSubscriber implements EventSubscriberInterface
+{
+
+    public static function getSubscribedEvents()
+    {
+        return [FunctionCallEvent::class => 'functionCall'];
+    }
+
+    function functionCall(FunctionCallEvent $event)
+    {
+        $dialog = $event->getDialog();
+        $function_name = $event->getMessageFunctionCall()->getFunctionCall()->getName();
+        // если это нужный нам вызов функции, то формируем ответ и добавляем в диалог
+        if ($function_name === 'player_number_name') {
+            $response = $event->getMessageFunctionCall()->buildFunctionResult(json_encode(['player_number_name' => 'Иванов Иван Иванович']));
+            $dialog->addMessage($response);
+        }
+    }
+}
+```
+
 ## Tests
 Чтобы запустить интеграционные тесты укажите свои client_id и secret_id в 
 файле `phpunit.xml.dist`
