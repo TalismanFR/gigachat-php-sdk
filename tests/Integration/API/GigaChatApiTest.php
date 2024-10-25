@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Talismanfr\GigaChat\API\Auth\GigaChatOAuth;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\GigaChatApi;
+use Talismanfr\GigaChat\API\Requests\TokensCountRequest;
 use Talismanfr\GigaChat\Domain\VO\FewShotExample;
 use Talismanfr\GigaChat\Domain\VO\FunctionParameters;
 use Talismanfr\GigaChat\Domain\VO\FunctionProperties;
@@ -70,7 +71,20 @@ class GigaChatApiTest extends TestCase
         $response = $api->completions($dialog);
         self::assertEquals(200, $response->getStatusCode());
         self::assertJson($response->getBody()->__toString());
-        self::assertStringContainsStringIgnoringCase('function_call',$response->getBody()->__toString());
+        self::assertStringContainsStringIgnoringCase('function_call', $response->getBody()->__toString());
+    }
+
+    /**
+     * @param GigaChatApi $api
+     * @return void
+     * @depends test__construct
+     */
+    public function testTokenCount(GigaChatApi $api)
+    {
+        $request = new TokensCountRequest(Model::createGigaChat(), ['Тест токенов','новый']);
+        $response = $api->tokensCount($request);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertJson($response->getBody()->__toString());
     }
 
     public function test__construct()

@@ -28,7 +28,6 @@ class GigaChatServiceTest extends TestCase
         $auth = new GigaChatOAuth(
             getenv('CLIENT_ID'),
             getenv('SECRET_ID'),
-            false,
             Scope::GIGACHAT_API_CORP
         );
         $api = new GigaChatApi($auth);
@@ -87,13 +86,13 @@ class GigaChatServiceTest extends TestCase
                     ]),
                 )
             ),
-            'Возвращает фамилию имя и отчество игрока играющего в футбольном клубе под определенным номером',
+            'Возвращает фамилию имя и отчество игрока играющего в футбольном клубе под определенным номером.',
             [
                 new FewShotExample('Кто играет в зените под первым номером?', ['soccer_club_name' => 'Зенит', 'player_number' => 1])
             ]
         );
         $dialog->addFunction($function);
-        $dialog->addMessage(new Message(0, 'Кто играет под десятым номером в металлурге-кузбасс?'));
+        $dialog->addMessage(new Message(0, 'Кто играет под трехсотым номером в металлург-кузбассе?'));
         $result = $service->completions($dialog);
         self::assertCount(5, $dialog->getMessages()->getMessages());
         self::assertInstanceOf(FunctionCall::class, $result->choices[0]->message->function_call, json_encode($result->choices, JSON_UNESCAPED_UNICODE));

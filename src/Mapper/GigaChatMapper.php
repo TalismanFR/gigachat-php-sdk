@@ -9,6 +9,7 @@ use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\Model;
 use Talismanfr\GigaChat\Domain\VO\Models;
 use Talismanfr\GigaChat\Domain\VO\Role;
+use Talismanfr\GigaChat\Domain\VO\TokensCount;
 use Talismanfr\GigaChat\Domain\VO\UsageTokens;
 use Talismanfr\GigaChat\Service\Response\CompletionChoiceResponse;
 use Talismanfr\GigaChat\Service\Response\CompletionMessageResponse;
@@ -56,5 +57,20 @@ class GigaChatMapper
             )
         );
 
+    }
+
+    /**
+     * @return TokensCount[]
+     */
+    public function tokensCountFromResponse(ResponseInterface $response): array
+    {
+        $data = json_decode($response->getBody()->__toString(), true);
+
+        $result = [];
+        foreach ($data as $datum) {
+            $result[] = new TokensCount($datum['tokens'], $datum['characters']);
+        }
+
+        return $result;
     }
 }

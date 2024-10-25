@@ -83,7 +83,13 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
             throw new ErrorGetAccessTokenException($response, 'Error while getting access token', $response->getStatusCode());
         }
 
-        return AccessToken::createFromArray($this->json($response));
+        $data = $this->json($response);
+        $expireAtDatetime = new \DateTimeImmutable('@' . floor($data['expires_at'] / 1000));
+
+        return new AccessToken(
+            $data['access_token'],
+            $expireAtDatetime
+        );
     }
 
     private function json(ResponseInterface $response): array
