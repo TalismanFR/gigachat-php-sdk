@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Talismanfr\GigaChat\Domain\VO;
 
-use Talismanfr\GigaChat\Type\ArrayConverterInterface;
 
-final class Model implements ArrayConverterInterface, \JsonSerializable
+final class Model implements \JsonSerializable
 {
     public const ID_GIGACHAT = 'GigaChat';
     public const ID_GIGACHAT_PRO = 'GigaChat-Pro';
@@ -26,6 +25,11 @@ final class Model implements ArrayConverterInterface, \JsonSerializable
         $this->id = $id;
         $this->object = $object;
         $this->ownedBy = $ownedBy;
+    }
+
+    public static function createGigaChat(): self
+    {
+        return new self(self::ID_GIGACHAT, 'model', self::DEFAULT_OWNED);
     }
 
     public static function createGigaChatPro(): self

@@ -78,7 +78,6 @@ class GigaChatApiTest extends TestCase
         $auth = new GigaChatOAuth(
             getenv('CLIENT_ID'),
             getenv('SECRET_ID'),
-            false,
             Scope::GIGACHAT_API_CORP
         );
         $api = new GigaChatApi($auth);

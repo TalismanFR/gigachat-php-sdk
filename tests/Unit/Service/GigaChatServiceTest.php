@@ -6,6 +6,7 @@ namespace Talismanfr\Tests\Unit\Service;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Talismanfr\GigaChat\API\Auth\VO\AccessToken;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
 use Talismanfr\GigaChat\Domain\VO\FinishReason;
@@ -19,7 +20,6 @@ use Talismanfr\GigaChat\Service\GigaChatService;
 use Talismanfr\GigaChat\Service\Response\CompletionChoiceResponse;
 use Talismanfr\GigaChat\Service\Response\CompletionMessageResponse;
 use Talismanfr\GigaChat\Service\Response\CompletionResponse;
-use Talismanfr\GigaChat\Type\AccessToken;
 use Talismanfr\Tests\Support\FunctionCallSubscriber;
 
 class GigaChatServiceTest extends TestCase

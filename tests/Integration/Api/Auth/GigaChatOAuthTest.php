@@ -6,10 +6,10 @@ namespace Talismanfr\Tests\Integration\Api\Auth;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Talismanfr\GigaChat\API\Auth\GigaChatOAuth;
+use Talismanfr\GigaChat\API\Auth\VO\AccessToken;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
 use Talismanfr\GigaChat\Domain\VO\Scope;
 use Talismanfr\GigaChat\Exception\ErrorGetAccessTokenException;
-use Talismanfr\GigaChat\Type\AccessToken;
 
 class GigaChatOAuthTest extends TestCase
 {
@@ -19,8 +19,7 @@ class GigaChatOAuthTest extends TestCase
         $auth = new GigaChatOAuth(
             getenv('CLIENT_ID'),
             getenv('SECRET_ID'),
-            false,
-            Scope::GIGACHAT_API_CORP
+            Scope::GIGACHAT_API_CORP,
         );
         self::assertInstanceOf(GigaChatOAuthInterface::class, $auth);
         return $auth;
@@ -35,7 +34,7 @@ class GigaChatOAuthTest extends TestCase
         self::assertInstanceOf(AccessToken::class, $accessToken);
         self::assertFalse($accessToken->isExpired());
 
-        $authError = new GigaChatOAuth('fail', 'fail', false, Scope::GIGACHAT_API_CORP);
+        $authError = new GigaChatOAuth('fail', 'fail', Scope::GIGACHAT_API_CORP);
         self::expectException(ErrorGetAccessTokenException::class);
         $authError->getAccessToken(Uuid::uuid4());
     }

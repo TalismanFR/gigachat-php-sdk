@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Talismanfr\GigaChat\Type;
+namespace Talismanfr\GigaChat\API\Auth\VO;
 
-class AccessToken implements ArrayConverterInterface
+class AccessToken
 {
     private string $accessToken;
     private \DateTimeImmutable $expiresAt;
@@ -30,15 +30,5 @@ class AccessToken implements ArrayConverterInterface
     public function isExpired(): bool
     {
         return new \DateTime() >= $this->expiresAt;
-    }
-
-    public static function createFromArray(array $array): self
-    {
-        $expireAtDatetime = new \DateTimeImmutable('@' . floor($array['expires_at'] / 1000));
-
-        return new AccessToken(
-            $array['access_token'],
-            $expireAtDatetime
-        );
     }
 }

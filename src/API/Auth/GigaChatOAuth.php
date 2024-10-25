@@ -9,10 +9,10 @@ use GuzzleHttp\RequestOptions;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\UuidInterface;
+use Talismanfr\GigaChat\API\Auth\VO\AccessToken;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
 use Talismanfr\GigaChat\Domain\VO\Scope;
 use Talismanfr\GigaChat\Exception\ErrorGetAccessTokenException;
-use Talismanfr\GigaChat\Type\AccessToken;
 use Talismanfr\GigaChat\Url;
 
 final class GigaChatOAuth implements GigaChatOAuthInterface
@@ -25,14 +25,12 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
     /**
      * @param string $clientId
      * @param string $clientSecret
-     * @param bool $cert false=Отключить валидацию сертификата в https запросах
      * @param Scope $scope
      * @param ClientInterface|null $client
      */
     public function __construct(
         string           $clientId,
         string           $clientSecret,
-        bool             $cert = true,
         Scope            $scope = Scope::GIGACHAT_API_PERS,
         ?ClientInterface $client = null
     )
@@ -44,7 +42,7 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
         if ($client === null) {
             $this->client = new Client([
                 'base_uri' => Url::OAUTH_API_URL,
-                RequestOptions::VERIFY => $cert,
+                RequestOptions::VERIFY => false,
                 RequestOptions::HTTP_ERRORS => false
             ]);
         } else {
