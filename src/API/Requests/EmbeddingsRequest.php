@@ -5,16 +5,15 @@ namespace Talismanfr\GigaChat\API\Requests;
 
 use Talismanfr\GigaChat\Domain\VO\Model;
 
-final readonly class TokensCountRequest implements \JsonSerializable
+final readonly class EmbeddingsRequest implements \JsonSerializable
 {
+
     public function __construct(
         public Model $model,
         public array $input
     )
     {
-        if (count($this->input) === 0) {
-            throw new \InvalidArgumentException('input cannot be empty');
-        }
+
     }
 
     public function jsonSerialize(): mixed

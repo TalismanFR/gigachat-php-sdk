@@ -6,9 +6,10 @@ namespace Talismanfr\GigaChat\Domain\VO;
 
 final class Model implements \JsonSerializable
 {
-    public const ID_GIGACHAT = 'GigaChat';
-    public const ID_GIGACHAT_PRO = 'GigaChat-Pro';
-    public const ID_GIGACHAT_PLUS = 'GigaChat-Plus';
+    public const string ID_GIGACHAT = 'GigaChat';
+    public const string ID_GIGACHAT_PRO = 'GigaChat-Pro';
+    public const string ID_GIGACHAT_PLUS = 'GigaChat-Plus';
+    public const string ID_EMBEDDINGS = 'Embeddings';
 
     private string $id;
     private string $object;
@@ -30,6 +31,11 @@ final class Model implements \JsonSerializable
     public static function createGigaChat(): self
     {
         return new self(self::ID_GIGACHAT, 'model', self::DEFAULT_OWNED);
+    }
+
+    public static function createEmbeddings(): self
+    {
+        return new self(self::ID_EMBEDDINGS, 'model', self::DEFAULT_OWNED);
     }
 
     public static function createGigaChatPro(): self

@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace Talismanfr\GigaChat\Service;
 
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
+use Talismanfr\GigaChat\API\Requests\EmbeddingsRequest;
 use Talismanfr\GigaChat\API\Requests\TokensCountRequest;
 use Talismanfr\GigaChat\Domain\Entity\Dialog;
+use Talismanfr\GigaChat\Domain\VO\Embedding;
 use Talismanfr\GigaChat\Domain\VO\Models;
 use Talismanfr\GigaChat\Domain\VO\TokensCount;
+use Talismanfr\GigaChat\Exception\ErrorGetEmbeddingsExeption;
 use Talismanfr\GigaChat\Exception\ErrorGetModelsExeption;
 use Talismanfr\GigaChat\Exception\ErrorGetTokensCountExeption;
 use Talismanfr\GigaChat\Mapper\GigaChatMapper;
@@ -55,5 +58,18 @@ class GigaChatService implements GigaChatServiceInterface
         }
 
         return $this->mapper->tokensCountFromResponse($response);
+    }
+
+    /**
+     * @return Embedding[]
+     */
+    public function embeddings(EmbeddingsRequest $request): array
+    {
+        $response = $this->api->embeddings($request);
+        if ($response->getStatusCode() !== 200) {
+            throw  new ErrorGetEmbeddingsExeption($response, 'Error get embeddings', $response->getStatusCode());
+        }
+
+        return $this->mapper->embeddingsFromResponse($response);
     }
 }

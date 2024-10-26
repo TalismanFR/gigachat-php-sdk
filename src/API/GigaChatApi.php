@@ -12,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\Uuid;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
+use Talismanfr\GigaChat\API\Requests\EmbeddingsRequest;
 use Talismanfr\GigaChat\API\Requests\TokensCountRequest;
 use Talismanfr\GigaChat\Domain\Entity\Dialog;
 use Talismanfr\GigaChat\Url;
@@ -21,6 +22,7 @@ final class GigaChatApi implements GigaChatApiInterface
     private const string URL_MODELS = 'models';
     private const string URL_CHAT_COMPLETION = 'chat/completions';
     private const string URL_TOKENS_COUNT = 'tokens/count';
+    private const string URL_EMBEDDINGS = 'embeddings';
 
     public function __construct(
         private GigaChatOAuthInterface $auth,
@@ -74,6 +76,17 @@ final class GigaChatApi implements GigaChatApiInterface
     {
         return $this->client->sendRequest(
             new Request('POST', self::URL_TOKENS_COUNT, [
+                'Authorization' => 'Bearer ' . $this->auth->getAccessToken(Uuid::uuid4())->getAccessToken()
+            ],
+                json_encode($request, JSON_UNESCAPED_UNICODE)
+            )
+        );
+    }
+
+    public function embeddings(EmbeddingsRequest $request): ResponseInterface
+    {
+        return $this->client->sendRequest(
+            new Request('POST', self::URL_EMBEDDINGS, [
                 'Authorization' => 'Bearer ' . $this->auth->getAccessToken(Uuid::uuid4())->getAccessToken()
             ],
                 json_encode($request, JSON_UNESCAPED_UNICODE)

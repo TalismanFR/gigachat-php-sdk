@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Talismanfr\GigaChat\Mapper;
 
 use Psr\Http\Message\ResponseInterface;
+use Talismanfr\GigaChat\Domain\VO\Embedding;
 use Talismanfr\GigaChat\Domain\VO\FinishReason;
 use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\Model;
@@ -71,6 +72,24 @@ class GigaChatMapper
             $result[] = new TokensCount($datum['tokens'], $datum['characters']);
         }
 
+        return $result;
+    }
+
+    /**
+     * @return Embedding[]
+     */
+    public function embeddingsFromResponse(ResponseInterface $response): array
+    {
+        $data = json_decode($response->getBody()->__toString(), true);
+
+        $result = [];
+        foreach ($data['data'] ?? [] as $datum) {
+            $result[] = new Embedding(
+                $datum['usage']['prompt_tokens'],
+                $datum['embedding'],
+                $datum['index']
+            );
+        }
         return $result;
     }
 }
