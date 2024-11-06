@@ -12,10 +12,10 @@ use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\Uuid;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
+use Talismanfr\GigaChat\API\Contract\UrlsInterface;
 use Talismanfr\GigaChat\API\Requests\EmbeddingsRequest;
 use Talismanfr\GigaChat\API\Requests\TokensCountRequest;
 use Talismanfr\GigaChat\Domain\Entity\Dialog;
-use Talismanfr\GigaChat\Url;
 
 final class GigaChatApi implements GigaChatApiInterface
 {
@@ -26,12 +26,17 @@ final class GigaChatApi implements GigaChatApiInterface
 
     public function __construct(
         private GigaChatOAuthInterface $auth,
-        private ?ClientInterface       $client = null
+        private ?ClientInterface       $client = null,
+        private ?UrlsInterface         $urls = null
     )
     {
+        if (!$this->urls) {
+            $this->urls = new Urls();
+        }
+
         if (!$this->client) {
             $this->client = new Client([
-                'base_uri' => Url::GIGACHAT_API_URL,
+                'base_uri' => $this->urls->getGigaChatApiUrl(),
                 RequestOptions::VERIFY => false,
                 RequestOptions::HTTP_ERRORS => false,
                 RequestOptions::HEADERS => [

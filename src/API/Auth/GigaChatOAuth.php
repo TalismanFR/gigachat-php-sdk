@@ -11,9 +11,10 @@ use Psr\Http\Message\ResponseInterface;
 use Ramsey\Uuid\UuidInterface;
 use Talismanfr\GigaChat\API\Auth\VO\AccessToken;
 use Talismanfr\GigaChat\API\Contract\GigaChatOAuthInterface;
+use Talismanfr\GigaChat\API\Contract\UrlsInterface;
+use Talismanfr\GigaChat\API\Urls;
 use Talismanfr\GigaChat\Domain\VO\Scope;
 use Talismanfr\GigaChat\Exception\ErrorGetAccessTokenException;
-use Talismanfr\GigaChat\Url;
 
 final class GigaChatOAuth implements GigaChatOAuthInterface
 {
@@ -29,19 +30,25 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
      * @param ClientInterface|null $client
      */
     public function __construct(
-        string           $clientId,
-        string           $clientSecret,
-        Scope            $scope = Scope::GIGACHAT_API_PERS,
-        ?ClientInterface $client = null
+        string                 $clientId,
+        string                 $clientSecret,
+        Scope                  $scope = Scope::GIGACHAT_API_PERS,
+        ?ClientInterface       $client = null,
+        private ?UrlsInterface $urls = null
     )
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->scope = $scope;
 
+
+        if (!$this->urls) {
+            $this->urls = new Urls();
+        }
+
         if ($client === null) {
             $this->client = new Client([
-                'base_uri' => Url::OAUTH_API_URL,
+                'base_uri' => $this->urls->getOAuthUrl(),
                 RequestOptions::VERIFY => false,
                 RequestOptions::HTTP_ERRORS => false
             ]);

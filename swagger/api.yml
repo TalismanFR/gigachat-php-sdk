@@ -25,7 +25,7 @@ info:
 
     :::tip
     
-    Вы также можете передавать запросы к [моделям в раннем доступе](/ru/gigachat/models#obrashenie-k-modelyam-rannego-dostupa).
+    Вы также можете передавать запросы к [моделям в раннем доступе](/ru/gigachat/models/preview-models).
     Их возможности могут отличаться от моделей, доступных в промышленном контуре.
 
     Для обращения к моделям в раннем доступе передавайте запросы по адресу `https://gigachat-preview.devices.sberbank.ru/`.
@@ -39,18 +39,18 @@ info:
     -H 'Content-Type: application/x-www-form-urlencoded' \
     -H 'Accept: application/json' \
     -H 'RqUID: <идентификатор_запроса>' \
-    -H 'Authorization: Basic <авторизационные_данные>' \
+    -H 'Authorization: Basic ключ_авторизации' \
     --data-urlencode 'scope=GIGACHAT_API_PERS'
     ```
 
     Где:
 
-    * `RqUID` — обязательный заголовок, в котором нужно передать уникальный идентификатор запроса в формате `uuid4`.
-    * `Authorization` — обязательный заголовок, в котором нужно передать авторизационные данные — строку, полученную в результате кодирования в base64 идентификатора (Client ID) и клиентского ключа (Client Secret) API.
+    * `RqUID` — обязательный заголовок, в котором нужно передать уникальный идентификатор запроса в формате `uuid4`. Идентификатор нужно указать самостоятельно, для этого можно использовать стандартные библиотеки и классы для генерации UUID и GUID.
+    * `Authorization` — обязательный заголовок, в котором нужно передать ключ авторизации — строку, полученную в результате кодирования в base64 идентификатора (Client ID) и клиентского ключа (Client Secret) API.
     * `scope` — обязательное поле в теле запроса, которое указывает к какой версии API выполняется запрос. Возможные значения:
       * `GIGACHAT_API_PERS` — доступ для физических лиц.
-      * `GIGACHAT_API_B2B` — доступ для ИП и юридических лиц [по предоплате](/ru/gigachat/api/tariffs#platnye-pakety-pri-rabote-po-predoplatnoy-sheme).
-      * `GIGACHAT_API_CORP` — доступ для ИП и юридических лиц [по постоплате](/ru/gigachat/api/legal-postpaid).
+      * `GIGACHAT_API_B2B` — доступ для ИП и юридических лиц по [платным пакетам](/ru/gigachat/quickstart/legal-tokens-purchase#pokupka-paketov).
+      * `GIGACHAT_API_CORP` — доступ для ИП и юридических лиц по схеме [pay-as-you-go](/ru/gigachat/quickstart/legal-tokens-purchase#oplata-pay-as-you-go).
 
     При успешном выполнении запроса GigaChat API вернет токен доступа, который действует в течение 30 минут:
 
@@ -63,7 +63,7 @@ info:
 
     :::note
 
-    Как получить токен и авторизационные данные (Client Id и Client Secret) читайте в разделах [Быстрый старт для физических лиц](/ru/gigachat/individuals-quickstart) и [Быстрый старт для ИП и юридических лиц](/ru/gigachat/legal-quickstart).
+    Как получить ключ авторизации и токен доступа Access token читайте в разделах [Быстрый старт для физических лиц](/ru/gigachat/individuals-quickstart) и [Быстрый старт для ИП и юридических лиц](/ru/gigachat/legal-quickstart).
 
     :::
 
@@ -74,7 +74,7 @@ info:
 
     Для обращения к таким моделям используйте адрес `https://gigachat-preview.devices.sberbank.ru/`, а к названию модели, которое передается в поле `model`, добавьте постфикс `-preview`.
 
-    Подробнее — в разделе [Модели GigaChat](/ru/gigachat/models#obrashenie-k-modelyam-rannego-dostupa).
+    Подробнее — в разделе [Модели GigaChat](/ru/gigachat/models/preview-models).
 
 servers:
 - url: https://gigachat.devices.sberbank.ru/api/v1
@@ -102,13 +102,13 @@ paths:
             Уникальный идентификатор запроса. Соответствует формату [`uuid4`](https://www.uuidgenerator.net/version4).
 
             Параметр для журналирования входящих вызовов и разбора инцидентов.
-            Для создания уникального идентификатора можно использовать стандартные библиотеки и классы для генерации UUID и GUID.
+            Идентификатор нужно указать самостоятельно, для этого можно использовать стандартные библиотеки и классы для генерации UUID и GUID.
 
             Пример: `6f0b1291-c7f3-43c6-bb2e-9f3efb2dc98e`.
           required: true
           schema:
             type: string
-            format: uuid
+            format: uuidv4
             pattern: (([0-9a-fA-F-])36)
             example: 6f0b1291-c7f3-43c6-bb2e-9f3efb2dc98e
       requestBody:
@@ -122,8 +122,8 @@ paths:
                       Версия API. Возможные значения:
 
                         * `GIGACHAT_API_PERS` — доступ для физических лиц.
-                        * `GIGACHAT_API_B2B` — доступ для ИП и юридических лиц [по предоплате](/ru/gigachat/api/tariffs#platnye-pakety-pri-rabote-po-predoplatnoy-sheme).
-                        * `GIGACHAT_API_CORP` — доступ для ИП и юридических лиц [по постоплате](/ru/gigachat/api/legal-postpaid).
+                        * `GIGACHAT_API_B2B` — доступ для ИП и юридических лиц по [платным пакетам](/ru/gigachat/quickstart/legal-tokens-purchase#pokupka-paketov).
+                        * `GIGACHAT_API_CORP` — доступ для ИП и юридических лиц по схеме [pay-as-you-go](/ru/gigachat/quickstart/legal-tokens-purchase#oplata-pay-as-you-go).
                     type: string
                     enum:
                       - GIGACHAT_API_PERS
@@ -151,13 +151,13 @@ paths:
         Возвращает токен доступа для авторизации запросов к API.
         Токен доступа действителен в течение 30 минут.
 
-        В заголовке `Authorization` нужно передать авторизационные данные — строку, полученную в результате кодирования в base64 идентификатора (Client ID) и клиентского ключа (Client Secret) API.
+        В заголовке `Authorization` нужно передать ключ авторизации — строку, полученную в результате кодирования в base64 идентификатора (Client ID) и клиентского ключа (Client Secret) API.
 
         Консоль запросов автоматически кодирует заданные идентификатор и клиентский ключ.
 
         :::note
 
-        Как получить токен и авторизационные данные (Client Id и Client Secret) читайте в разделах [Быстрый старт для физических лиц](/ru/gigachat/individuals-quickstart) и [Быстрый старт для ИП и юридических лиц](/ru/gigachat/legal-quickstart).
+        Как получить ключ авторизации и токен доступа Access token читайте в разделах [Быстрый старт для физических лиц](/ru/gigachat/individuals-quickstart) и [Быстрый старт для ИП и юридических лиц](/ru/gigachat/legal-quickstart).
 
         :::
   /tokens/count:
@@ -183,6 +183,34 @@ paths:
       operationId: postTokensCount
       summary: Подсчитать количество токенов
       description: Возвращает объект с информацией о количестве токенов, подсчитанных заданной моделью в строках. Строки передаются в массиве `input`.
+  /balance:
+    get:
+      tags:
+        - Чат
+      parameters:
+        - $ref: '#/components/parameters/xRequestId'
+        - $ref: '#/components/parameters/xSessionId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+          description: OK
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/PermissionDeniedError'
+      security:
+        - Токен доступа: []
+      operationId: getBalance
+      summary: Получить остаток токенов
+      description: |
+        Возвращает доступный остаток токенов для каждой из моделей.
+        Метод доступен только при покупке пакетов токенов.
+        Если вы оплачиваете работу с API по схеме [pay-as-you-go](/ru/gigachat/api/tariffs#oplata-pay-as-you-go), запрос вернет ошибку 403 Permission Denied.
+
+        Подробнее о пакетах токенов — в разделах платные пакеты для [физических лиц](/ru/gigachat/api/tariffs#platnye-pakety) или [для ИП и юридических лиц](/ru/gigachat/api/tariffs#platnye-pakety2).
   /models:
     get:
       tags:
@@ -201,6 +229,85 @@ paths:
       operationId: getModels
       summary: Получить список моделей
       description: Возвращает массив объектов с данными доступных моделей. Описание доступных моделей в разделе [Модели GigaChat](/ru/gigachat/models).
+  /files:
+    get:
+      tags:
+        - files
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Files'
+          description: OK
+      security:
+        - Токен доступа: []
+      operationId: getFiles
+      summary: Получить список доступных файлов
+      description: Возвращает массив объектов с данными доступных файлов.
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FileUpload'
+        required: true
+      tags:
+        - files
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+          description: OK
+      security:
+        - Токен доступа: []
+      operationId: postFile
+      summary: Загрузить файл
+      description: |
+        Загружает в хранилище файл изображения.
+        Возвращает объект с данными загруженного файла.
+        Загруженные файлы доступны только вам.
+
+        Максимальный размер одного файла — 15 Мб.
+        Максимальный размер запроса — 20 Мб.
+
+        Идентификатор файла, указанный в поле `id`, можно использовать при [запросах на генерацию](/ru/gigachat/api/reference/rest/post-chat).
+        Для этого идентификаторы нужно передать в массиве `attachments`.
+        Подробнее — в разделе [Генерация с помощью файлов изображений](/ru/gigachat/api/working-with-files).
+
+        Поддерживаемые форматы изображений:
+
+        | Формат | MIME-тип   |
+        |--------|------------|
+        | jpg    | image/jpg  |
+        | png    | image/png  |
+        | tiff   | image/tiff |
+        | bmp    | image/bmp  |
+  /files/{file}:
+    get:
+      tags:
+        - files
+      parameters:
+        - name: file
+          description: Идентификатор файла. Идентификатор содержится в поле найти в поле `id` объекта, который создается при загрузке файла в хранилище.
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+          description: OK
+      security:
+        - Токен доступа: []
+      operationId: getFile
+      summary: Получить информацию о файле
+      description: Возвращает объект с описанием указанного файла.
   /files/{file_id}/content:
     get:
       tags:
@@ -208,14 +315,22 @@ paths:
       parameters:
         - name: file_id
           description: |
-            Идентификатор созданного изображения, полученный в ответ на запрос пользователя.
+            Идентификатор изображения, полученный в ответ на запрос пользователя о генерации изображений.
             Содержится в ответе модели, в теге `<img>`, в атрибуте `src`.
 
-            Побробнее в разделе [Генерация изображений](/ru/gigachat/api/images-generation).
+            Подробнее в разделе [Генерация изображений](/ru/gigachat/api/images-generation).
           schema:  
             type: string
           in: path
           required: true
+        - in: header
+          name: X-Client-ID
+          schema:
+            type: string
+            description: |
+              Идентификатор пользователя, который был передан в заголовке запроса на создание изображения [`GET /files/{file_id}/content`](/ru/gigachat/api/reference/rest/get-file-id).
+
+              Если запрос на создание изображения содержал заголовок `X-Client-ID`, то такой же заголовок нужно передавать в запросе на скачивание файла.
       responses:
         '200':
           content:
@@ -230,27 +345,54 @@ paths:
       security:
         - Токен доступа: []
       operationId: getFileId
-      summary: Получить изображение по идентификатору
+      summary: Скачать файл
       description: |
-        Возвращает файл изображения в бинарном представлении, в формате JPG.
+        Возвращает файл изображения в бинарном представлении в формате JPG.
 
         Изображения создаются с помощью запроса [POST /chat/completions](/ru/gigachat/api/reference/rest/post-chat).
 
-        Подробнее читайте в разделе [Генерация изображений](/ru/gigachat/api/images-generation).
+        Подробнее читайте в разделе [Создание изображений](/ru/gigachat/api/images-generation).
         
         :::note
 
         Консоль запроса отключена из-за бинарного формата ответа.
 
         :::
+  /files/{file}/delete:
+    post:
+      tags:
+        - files
+      parameters:
+        - name: file
+          description: Идентификатор файла, который нужно удалить
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileDeleted'
+      security:
+        - Токен доступа: []
+      operationId: fileDelete
+      summary: Удалить файл
+      description: Переводит статус файла в значение `deleted`.
   /chat/completions:
     post:
+      parameters:
+        - $ref: '#/components/parameters/xClientId'
+        - $ref: '#/components/parameters/xRequestId'
+        - $ref: '#/components/parameters/xSessionId'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Chat'
-              example: {"model": "GigaChat","messages": [{"role": "system","content": "Ты профессиональный переводчик на английский язык. Переведи точно сообщение пользователя."},{"role": "user","content": "GigaChat — это сервис, который умеет взаимодействовать с пользователем в формате диалога, писать код, создавать тексты и картинки по запросу пользователя."}],"n": 1,"stream": false,"update_interval": 0}
+              example: {"model": "GigaChat","messages": [{"role": "system","content": "Ты профессиональный переводчик на английский язык. Переведи точно сообщение пользователя."},{"role": "user","content": "GigaChat — это сервис, который умеет взаимодействовать с пользователем в формате диалога, писать код, создавать тексты и картинки по запросу пользователя."}],"stream": false,"update_interval": 0}
       tags:
         - Чат
       responses:
@@ -277,7 +419,13 @@ paths:
       operationId: postChat
       summary: Получить ответ модели на сообщения
       description: |
-        Возвращает ответ модели сгенерированный на основе переданных сообщений.
+        Возвращает ответ модели, сгенерированный на основе переданных сообщений.
+
+        При генерации ответа модель может учитывать файлы изображений в хранилище.
+        Для этого передайте список идентификаторов файлов в массиве `attachments`.
+        В одном сообщении (объект в массиве `messages`) можно передать только одно изображение.
+        В одном запросе можно передать до 10 изображений, независимо от количества сообщений.
+        Подробнее — в разделе [Генерация с помощью файлов изображений](/ru/gigachat/api/working-with-files).
 
         Запрос на генерацию можно передавать [моделям в раннем доступе](/ru/gigachat/models#obrashenie-k-modelyam-rannego-dostupa).
         Для обращения к ним используйте адрес `https://gigachat-preview.devices.sberbank.ru/`, а к названию модели, которое передается в поле `model`, добавьте постфикс `-preview`.
@@ -306,6 +454,28 @@ paths:
 
         Векторное представление выглядит как массив чисел `embedding`. Каждое значение в массиве представляет одну из характеристик или признаков текста, учтенных при вычислении эмбеддинга. Значения образуют числовое представление текста и позволяют анализировать и использовать текст в различных задачах. Как правило, чем ближе значения эмбеддингов друг к другу, тем более семантически близки тексты.
 components:
+  parameters:
+    xClientId:
+      name: X-Client-ID
+      in: header
+      schema:
+        type: string
+        description: |
+          Произвольный идентификатор пользователя, который используется для логирования.
+
+          Если вы передали этот заголовок при запросе на создание изображения, то для скачивания изображения в запросе [`GET /files/{file_id}/content`](/ru/gigachat/api/reference/rest/get-file-id) нужно передать этот же заголовок.
+    xRequestId:
+      in: header
+      name: X-Request-ID
+      schema:
+        type: string
+        description: Произвольный идентификатор запроса, который используется для логирования.
+    xSessionId:
+      in: header
+      name: X-Session-ID
+      schema:
+        type: string
+        description: Произвольный идентификатор сессии, который используется для логирования.
   schemas:
     Model:
       type: object
@@ -319,7 +489,6 @@ components:
           type: string
           enum:
             - GigaChat
-            - GigaChat-Plus
             - GigaChat-Pro
           example: GigaChat
         object:
@@ -346,6 +515,130 @@ components:
           description: Тип сущности в ответе, например, список.
           type: string
           example: list
+    Balance:
+      type: object
+      properties:
+        balance:
+          type: array
+          items:
+            type: object
+            properties:
+              usage:
+                type: string
+                description: Название модели, например, GigaChat или embeddings. 
+                example: GigaChat
+              value:
+                type: integer
+                description: Остаток токенов
+                example: 100500
+    File:
+      description: Описание файла, доступного в хранилище
+      required:
+        - id
+        - object
+        - bytes
+        - created_at
+        - filename
+        - purpose
+      type: object
+      properties:
+        bytes:
+          description: Размер файла в байтах
+          type: integer
+          example: 120000
+        created_at:
+          description: Время создания файла в формате Unix-time
+          type: integer
+          example: 1677610602
+        filename:
+          description: Название файла
+          type: string
+          example: file123
+        id:
+          description: |
+            Идентификатор файла, который можно использовать при [запросах на генерацию](/ru/gigachat/api/reference/rest/post-chat).
+            Для этого идентификаторы нужно передать в массиве `attachments`.
+            
+            Подробнее — в разделе [Генерация с помощью файлов изображений](/ru/gigachat/api/working-with-files).
+          type: string
+          format: uuidv4
+          pattern: (([0-9a-fA-F-])36)
+          example: 6f0b1291-c7f3-43c6-bb2e-9f3efb2dc98e
+        object:
+          description: Тип объекта
+          type: string
+          example: file
+        purpose:
+          description: Назначение файлов. Значение `general` указывает на то, что файлы могут использоваться для [генерации ответа модели](/ru/gigachat/api/working-with-files)
+          enum:
+            - general
+          type: string
+        access_policy:
+          type: string
+          description: |
+            Доступность файла возможные значения:
+            
+            * `public`;
+            * `private`.
+          example: private
+          default: private
+          enum:
+            - public
+            - private  
+    Files:
+      description: Массив объектов с данными доступных файлов
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+    FileUpload:
+      required:
+        - file
+        - purpose
+      type: object
+      properties:
+        file:
+          format: binary
+          description: Загружаемый объект
+          type: string
+        purpose:
+          description: Назначение загружаемого файла
+          enum:
+            - general
+          type: string
+          default: general
+    FileDeleted:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор файла
+          example: d3277ca1-a140-484a-a3b4-9a121bea4bdc
+        deleted:
+          type: boolean
+          description: Признак удаления файла
+          example: true
+    FileAccessPolicy:
+      type: object
+      required:
+        - file_ids
+        - access_policy
+      properties:
+        file_ids:
+          type: array
+          description: Массив идентификаторов файлов
+          items:
+            type: string
+        access_policy:
+          type: string
+          enum:
+            - public
+            - private
+          description: Доступность файла       
     FileId:
       required:
         - file_id
@@ -374,12 +667,12 @@ components:
             $ref: '#/components/schemas/message'
         function_call:
           description: |
-            Поле которе отвечает за то, как GigaChat будет [работать с функциями](/ru/gigachat/api/function-calling).
+            Поле, которое отвечает за то, как GigaChat будет [работать с функциями](/ru/gigachat/api/function-calling).
             Может быть строкой или объектом.
 
             Возможные значения:
 
-            * `none` — режим работы по умолчанию. Если запрос не содержит `function_call` или значение поля — `none`, GigaChat не вызовет функции, а просто сгенерирует ответ в соотвествии с полученными сообщениями;
+            * `none` — режим работы по умолчанию. Если запрос не содержит `function_call` или значение поля — `none`, GigaChat не вызовет функции, а просто сгенерирует ответ в соответствии с полученными сообщениями;
 
             * `auto` — в зависимости от содержимого запроса, модель решает сгенерировать сообщение или вызвать функцию.
             Модель вызывает встроенные функции, если отсутствует массив `functions` с описанием пользовательских функций.
@@ -423,7 +716,7 @@ components:
                     request:
                       type: string
                       description: Запрос пользователя.
-                      example: Погода в Москва в ближайшие три дня
+                      example: Погода в Москве в ближайшие три дня
                     params:
                       type: object
                       description: Пример заполнения параметров пользовательской функции.
@@ -448,9 +741,9 @@ components:
             Параметр используется как альтернатива температуре (поле `temperature`). Задает вероятностную массу токенов, которые должна учитывать модель.
             Так, если передать значение 0.1, модель будет учитывать только токены, чья вероятностная масса входит в верхние 10%.
 
-            Значение по умолчанию зависит от выбранной модели (поле `model`) и может изменяться с обновлениями модели. Значения изменяются в диапазоне от ноля до единицы включительно.
+            Значение по умолчанию зависит от выбранной модели (поле `model`) и может изменяться с обновлениями модели.
 
-            Значение изменяется в диапазоне от 0 до 1.
+            Значение изменяется в диапазоне от 0 до 1 включительно.
           minimum: 0
           maximum: 1
         n:
@@ -468,13 +761,13 @@ components:
         stream:
           type: boolean
           description: |
-            Указывает, что сообщения надо передавать по частям в потоке.
+            Указывает что сообщения надо передавать по частям в потоке.
 
             Сообщения передаются по протоколу [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format).
 
             Поток завершается событием `data: [DONE]`.
 
-            Подробнее читайте в разделе [Потоковая передача токенов](/ru/gigachat/api/response-token-streaming).
+            Подробнее читайте в разделе [Потоковая генерация токенов](/ru/gigachat/api/response-token-streaming).
           default: false
           example: false
         max_tokens:
@@ -531,17 +824,32 @@ components:
           type: string
           format: uuidv4
           description: |
-            Идентификатор, который объединяет массив функций, переданных запросе.
+            Идентификатор, который объединяет массив функций, переданных в запросе.
             Возвращается в ответе модели (сообщение с `"role": "assistant"`) при вызове встроенных или собственных функций.
             Позволяет сохранить [контекст вызова функции](/ru/gigachat/api/function-calling#sohranenie-konteksta) и повысить качество работы модели.
-            Для этого нужно передать идентификатор в запросе на генерацию, в сообщении с ролью `assistant`.
+            Для этого нужно передать идентификатор в запросе на генерацию в сообщении с ролью `assistant`.
             
-            Поле заменяет массив `data_for_context`. В будущем поддержка массива будет прекращена.
+            Поле заменяет массив `data_for_context` и является целевым решением для работы с функциями.
 
-            Сейчас поле работает только при обращении к [моделям в раннем доступе](/ru/gigachat/models#obrashenie-k-modelyam-rannego-dostupa).
+            Сейчас поле работает только при обращении к [моделям в раннем доступе](/ru/gigachat/models/preview-models).
           example: 77d3fb14-457a-46ba-937e-8d856156d003
         data_for_context:
           $ref: '#/components/schemas/MessagesRes/properties/data_for_context'
+        attachments:
+          description: |
+            Массив идентификаторов файлов, которые нужно использовать при генерации.
+            Идентификатор присваивается файлу при [загрузке в хранилище](/ru/gigachat/api/reference/rest/post-file).
+            Посмотреть список файлов в хранилище можно с помощью метода [`GET /files`](/ru/gigachat/api/reference/rest/get-files).
+
+            В одном запросе можно передать только одно изображение.
+            В одной сессии можно передать до 10 изображений.
+
+            Подробнее — в разделе [Генерация с помощью файлов изображений](/ru/gigachat/api/working-with-files)
+          type: array
+          items:
+            type: string
+            example: 
+             - e7f0b84b-3d4f-4c2c-ac31-8855b1b0db0a
     MessagesRes:
       type: object
       description: Сгенерированное сообщение.
@@ -573,7 +881,7 @@ components:
 
             Для сохранения контекста, обязательно передавайте массив в запросе на генерацию, в сообщении с ролью `assistant`.
 
-            В будущем вместо массива нужно будет использовать [поле `functions_state_id`](/ru/gigachat/api/function-calling#sohranenie-konteksta).
+            Целевое решение для работы с функциями — [поле `functions_state_id`](/ru/gigachat/api/function-calling#sohranenie-konteksta).
     Usage:
       type: object
       description: Данные об использовании модели.
@@ -622,7 +930,7 @@ components:
         index:
           format: int32
           type: integer
-          description: Индекс сообщения в массиве начиная с ноля.
+          description: Индекс сообщения в массиве, начиная с ноля.
           example: 0
         finish_reason:
           description: |
@@ -630,8 +938,9 @@ components:
             
             * `stop` — модель закончила формировать гипотезу и вернула полный ответ;
             * `length` — достигнут лимит токенов в сообщении;
-            * `function_call` — указывает что при запросе была вызвана встроенная функция или сгенерированы аргументы для пользовательской функции;
-            * `blacklist` — запрос подпадает под [тематические ограничения](/ru/gigachat/limitations#tematicheskie-ogranicheniya-zaprosov).
+            * `function_call` — указывает, что при запросе была вызвана встроенная функция или сгенерированы аргументы для пользовательской функции;
+            * `blacklist` — запрос попадает под [тематические ограничения](/ru/gigachat/limitations#tematicheskie-ogranicheniya-zaprosov).
+            * `error` — ответ модели содержит невалидные аргументы пользовательской функции.
             
           type: string
           enum:
@@ -639,6 +948,7 @@ components:
             - length
             - function_call
             - blacklist
+            - error
           example: "stop"
     Token:
       type: object
@@ -728,7 +1038,6 @@ components:
           description: Название модели, которая будет использована для подсчета количества токенов.
           enum:
             - GigaChat
-            - GigaChat-Plus
             - GigaChat-Pro
           example: GigaChat
         input:
@@ -761,7 +1070,7 @@ components:
           example: sbermarket-pizza_order
         partial_arguments: 
           type: object
-          description: JSON-объект в котором вы можете явно задать некоторые аргументы указанной функции. Остальные аргументы модель сгенерирует самостоятлеьно.
+          description: JSON-объект в котором вы можете явно задать некоторые аргументы указанной функции. Остальные аргументы модель сгенерирует самостоятельно.
           properties: {}
     function_call_none_auto:
       type: string
@@ -769,7 +1078,7 @@ components:
         - auto
         - none
       description: Режим работы с функциями  
-      example: auto  
+      example: auto 
   responses:
     AuthUnauthorizedError:
       description: Ошибка авторизации.
@@ -786,6 +1095,21 @@ components:
                 type: string
                 description: Описание ошибки.
                 example: credentials doesn't match db data
+    PermissionDeniedError:
+      description: Ошибка доступа. Возникает возникает при отправке запроса если вы оплачиваете работу с API по схеме [pay-as-you-go](/ru/gigachat/api/tariffs#oplata-pay-as-you-go).
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                 type: integer
+                 description: HTTP-код сообщения.
+                 default: 403
+              message:
+                type: string
+                description: Описание ошибки.
+                default: Permission denied
     UnauthorizedError:
       description: Ошибка авторизации.
       content:
@@ -889,19 +1213,19 @@ components:
   securitySchemes:
     Базовая аутентификация:
       description: |
-        Базовая (Basic) аутентификация с помощью авторизационных данных — строки, полученной в результате кодирования в base64 идентификатора (Client ID) и клиентского ключа (Client Secret) API.
+        Базовая (Basic) аутентификация с помощью ключа авторизации — строки, полученной в результате кодирования в base64 идентификатора (Client ID) и клиентского ключа (Client Secret) API.
 
-        Авторизационные данные передаются в заголовке `Authorization`, в запросе на [получение токена доступа](/ru/gigachat/api/reference/rest/post-token).
+        Ключ авторизации передается в заголовке `Authorization`, в запросе на [получение токена доступа](/ru/gigachat/api/reference/rest/post-token).
 
         <Admonition type="note">
 
-        Как получить токен и авторизационные данные (Client Id и Client Secret) читайте в разделах [Быстрый старт для физических лиц](/ru/gigachat/individuals-quickstart) и [Быстрый старт для ИП и юридических лиц](/ru/gigachat/legal-quickstart).
+        Как получить ключ авторизации и токен доступа Access token читайте в разделах [Быстрый старт для физических лиц](/ru/gigachat/individuals-quickstart) и [Быстрый старт для ИП и юридических лиц](/ru/gigachat/legal-quickstart).
 
         </Admonition>
       scheme: basic
       type: http
     Токен доступа:
-      description: Аутентификация с помощью токена доступа. Используется во всех запросах к GigaChat API, кроме запроса на [получение токена доступа](/ru/gigachat/api/reference/rest/post-token).
+      description: Аутентификация с помощью токена доступа Access token. Используется во всех запросах к GigaChat API, кроме запроса на [получение токена доступа](/ru/gigachat/api/reference/rest/post-token)
       type: http
       scheme: bearer
       bearerFormat: JWT
