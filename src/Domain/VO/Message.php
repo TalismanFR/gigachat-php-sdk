@@ -69,7 +69,7 @@ final class Message implements \JsonSerializable
             return null;
         }
 
-        return new Message(0, $content, Role::FUNCTION, null, null, $this->getFunctionCall()->getName());
+        return new Message(0, $content, Role::FUNCTION, null, null, $this->getFunctionCall()?->getName());
     }
 
     public function jsonSerialize(): mixed

@@ -26,16 +26,15 @@ final class GigaChatApi implements GigaChatApiInterface
     private const string URL_EMBEDDINGS = 'embeddings';
     private const string URL_FILES = 'files';
 
-    /**
-     * @param ClientInterface|null|Client $client
-     */
+    private ClientInterface|Client $client;
+
     public function __construct(
         private readonly GigaChatOAuthInterface $auth,
-        private ?ClientInterface                $client = null,
-        private readonly ?UrlsInterface         $urls = new Urls()
+        ?ClientInterface                        $client = null,
+        private readonly UrlsInterface          $urls = new Urls()
     )
     {
-        if (!$this->client) {
+        if (!$client) {
             $this->client = new Client([
                 'base_uri' => $this->urls->getGigaChatApiUrl(),
                 RequestOptions::VERIFY => false,
@@ -45,6 +44,8 @@ final class GigaChatApi implements GigaChatApiInterface
                     'Content-Type' => 'application/json',
                 ]
             ]);
+        } else {
+            $this->client = $client;
         }
     }
 
@@ -102,6 +103,7 @@ final class GigaChatApi implements GigaChatApiInterface
 
     public function loadFile(LoadFileRequest $request): ResponseInterface
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return $this->client->post(self::URL_FILES, [
             RequestOptions::HEADERS => [
                 'Accept' => 'application/json',

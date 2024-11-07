@@ -21,14 +21,14 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
     private string $clientId;
     private string $clientSecret;
     private Scope $scope;
-    private ?ClientInterface $client = null;
+    private Client|ClientInterface $client;
 
     public function __construct(
-        string                 $clientId,
-        string                 $clientSecret,
-        Scope                  $scope = Scope::GIGACHAT_API_PERS,
-        ?ClientInterface       $client = null,
-        private readonly ?UrlsInterface $urls = new Urls()
+        string                         $clientId,
+        string                         $clientSecret,
+        Scope                          $scope = Scope::GIGACHAT_API_PERS,
+        ?ClientInterface               $client = null,
+        private readonly UrlsInterface $urls = new Urls()
     )
     {
         $this->clientId = $clientId;
@@ -56,6 +56,7 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
             $rqUID = \Ramsey\Uuid\Uuid::uuid4();
         }
 
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $response = $this->client->send(
             new Request(
                 'POST',

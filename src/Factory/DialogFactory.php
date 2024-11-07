@@ -41,7 +41,7 @@ final class DialogFactory
             $name,
             $functionParameters,
             $description,
-            $fewShotExamples
+            $fewShotExamples ?? []
         );
     }
 }

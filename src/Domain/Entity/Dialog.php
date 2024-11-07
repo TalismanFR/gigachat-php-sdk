@@ -47,7 +47,9 @@ final class Dialog implements \JsonSerializable
 
             //send event function_call if EventDispatcher exist
             if (isset($this->eventDispatcher) && $choice->message->function_call) {
-                $this->eventDispatcher->dispatch(new FunctionCallEvent($this, $this->messages->getLastMessage()));
+                if ($lastMessage = $this->getMessages()->getLastMessage()) {
+                    $this->eventDispatcher->dispatch(new FunctionCallEvent($this, $lastMessage));
+                }
             }
         }
     }
