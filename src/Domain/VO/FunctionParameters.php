@@ -28,7 +28,7 @@ final class FunctionParameters implements \JsonSerializable
             'properties' => $this->properties,
             'type' => $this->type
         ];
-        if ($this->properties->getRequired()) {
+        if (!is_null($this->properties->getRequired()) && count($this->properties->getRequired() ?? []) > 0) {
             $result['required'] = $this->properties->getRequired();
         }
         return $result;

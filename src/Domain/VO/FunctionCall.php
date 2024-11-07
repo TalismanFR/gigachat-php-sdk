@@ -31,6 +31,6 @@ final class FunctionCall implements \JsonSerializable
 
     public function jsonSerialize(): null|string|array
     {
-        return !$this->name || strtolower($this->name) === 'auto' ? $this->name : get_object_vars($this);
+        return is_null($this->name) || strtolower($this->name) === 'auto' ? $this->name : get_object_vars($this);
     }
 }

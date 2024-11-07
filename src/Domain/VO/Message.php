@@ -65,7 +65,7 @@ final class Message implements \JsonSerializable
      */
     public function buildFunctionResult(string $content): ?self
     {
-        if (!$this->functionCall?->getName()) {
+        if (is_null($this->functionCall?->getName())) {
             return null;
         }
 
