@@ -9,6 +9,8 @@ use Talismanfr\GigaChat\API\Auth\GigaChatOAuth;
 use Talismanfr\GigaChat\API\Contract\GigaChatApiInterface;
 use Talismanfr\GigaChat\API\GigaChatApi;
 use Talismanfr\GigaChat\API\Requests\EmbeddingsRequest;
+use Talismanfr\GigaChat\API\Requests\FilePathRequest;
+use Talismanfr\GigaChat\API\Requests\LoadFileRequest;
 use Talismanfr\GigaChat\API\Requests\TokensCountRequest;
 use Talismanfr\GigaChat\Domain\VO\FewShotExample;
 use Talismanfr\GigaChat\Domain\VO\FunctionParameters;
@@ -82,7 +84,7 @@ class GigaChatApiTest extends TestCase
      */
     public function testTokenCount(GigaChatApi $api)
     {
-        $request = new TokensCountRequest(Model::createGigaChat(), ['Тест токенов','новый']);
+        $request = new TokensCountRequest(Model::createGigaChat(), ['Тест токенов', 'новый']);
         $response = $api->tokensCount($request);
         self::assertEquals(200, $response->getStatusCode());
         self::assertJson($response->getBody()->__toString());
@@ -97,7 +99,57 @@ class GigaChatApiTest extends TestCase
         $response = $api->embeddings($request);
         self::assertEquals(200, $response->getStatusCode());
         self::assertJson($response->getBody()->__toString());
+    }
+
+    /**
+     * @depends test__construct
+     */
+    public function testLoadFile(GigaChatApi $api)
+    {
+        $path = __DIR__ . '/../../Support/giga.jpeg';
+        $file = new FilePathRequest($path);
+        $request = new LoadFileRequest($file, basename($path));
+        $response = $api->loadFile($request);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertJson($response->getBody()->__toString());
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
+    /**
+     * @depends test__construct
+     * @depends testLoadFile
+     */
+    public function testFileInfo(GigaChatApi $api, array $data)
+    {
+        $response = $api->fileInfo($data['id']);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertJson($response->getBody()->__toString());
+    }
+
+    /**
+     * @depends test__construct
+     */
+    public function testFiles(GigaChatApi $api)
+    {
+        $response = $api->files();
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertJson($response->getBody()->__toString());
         echo $response->getBody()->__toString();
+    }
+
+    /**
+     * @depends test__construct
+     * @depends testLoadFile
+     */
+    public function testDownloadFile(GigaChatApi $api, array $data)
+    {
+        $response = $api->downloadFile($data['id']);
+        self::assertEquals(200, $response->getStatusCode());
+        $path = __DIR__ . '/../../Support/testDownload.jpg';
+        file_put_contents($path, $response->getBody()->__toString());
+        $mime = mime_content_type($path);
+        self::assertEquals('image/jpeg', $mime);
     }
 
     public function test__construct()
@@ -112,4 +164,5 @@ class GigaChatApiTest extends TestCase
 
         return $api;
     }
+
 }

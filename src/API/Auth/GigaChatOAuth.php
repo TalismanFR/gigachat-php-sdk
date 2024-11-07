@@ -23,28 +23,17 @@ final class GigaChatOAuth implements GigaChatOAuthInterface
     private Scope $scope;
     private ?ClientInterface $client = null;
 
-    /**
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param Scope $scope
-     * @param ClientInterface|null $client
-     */
     public function __construct(
         string                 $clientId,
         string                 $clientSecret,
         Scope                  $scope = Scope::GIGACHAT_API_PERS,
         ?ClientInterface       $client = null,
-        private ?UrlsInterface $urls = null
+        private readonly ?UrlsInterface $urls = new Urls()
     )
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->scope = $scope;
-
-
-        if (!$this->urls) {
-            $this->urls = new Urls();
-        }
 
         if ($client === null) {
             $this->client = new Client([
