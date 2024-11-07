@@ -6,7 +6,7 @@ namespace Talismanfr\GigaChat\Exception;
 use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\ResponseInterface;
 
-class ErrorGetEmbeddingsExeption extends \Exception
+class ErrorFilesException extends \Exception
 {
     #[Pure] public function __construct(private ResponseInterface $response, string $message = "", int $code = 0, ?\Throwable $previous = null)
     {

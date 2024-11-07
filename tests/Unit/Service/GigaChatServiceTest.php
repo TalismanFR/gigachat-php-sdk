@@ -21,12 +21,12 @@ use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\Model;
 use Talismanfr\GigaChat\Domain\VO\Role;
 use Talismanfr\GigaChat\Domain\VO\TokensCount;
-use Talismanfr\GigaChat\Exception\ErrorDownloadFilesExeption;
-use Talismanfr\GigaChat\Exception\ErrorFileInfoExeption;
-use Talismanfr\GigaChat\Exception\ErrorFilesExeption;
-use Talismanfr\GigaChat\Exception\ErrorGetEmbeddingsExeption;
-use Talismanfr\GigaChat\Exception\ErrorGetTokensCountExeption;
-use Talismanfr\GigaChat\Exception\ErrorLoadFileExeption;
+use Talismanfr\GigaChat\Exception\ErrorDownloadFilesException;
+use Talismanfr\GigaChat\Exception\ErrorFileInfoException;
+use Talismanfr\GigaChat\Exception\ErrorFilesException;
+use Talismanfr\GigaChat\Exception\ErrorGetEmbeddingsException;
+use Talismanfr\GigaChat\Exception\ErrorGetTokensCountException;
+use Talismanfr\GigaChat\Exception\ErrorLoadFileException;
 use Talismanfr\GigaChat\Factory\DialogFactory;
 use Talismanfr\GigaChat\Mapper\GigaChatMapper;
 use Talismanfr\GigaChat\Service\Contract\GigaChatServiceInterface;
@@ -151,7 +151,7 @@ class GigaChatServiceTest extends TestCase
         $tokens = $result[0];
         self::assertEquals(5, $tokens->getTokens());
         self::assertEquals(12, $tokens->getCharacters());
-        self::expectException(ErrorGetTokensCountExeption::class);
+        self::expectException(ErrorGetTokensCountException::class);
 
         $service->tokensCount(new TokensCountRequest(Model::createGigaChat(), ['ds']));
 
@@ -174,7 +174,7 @@ class GigaChatServiceTest extends TestCase
             self::assertIsFloat($float);
         }
 
-        self::expectException(ErrorGetEmbeddingsExeption::class);
+        self::expectException(ErrorGetEmbeddingsException::class);
         $service->embeddings(new EmbeddingsRequest(Model::createEmbeddings(), ['sd']));
     }
 
@@ -188,7 +188,7 @@ class GigaChatServiceTest extends TestCase
         self::assertEquals('b6360f95-3272-409c-ad1a-32ec737f2952', $load->id->toString());
         self::assertEquals(5005, $load->bytes);
 
-        self::expectException(ErrorLoadFileExeption::class);
+        self::expectException(ErrorLoadFileException::class);
         $service->loadFile(new LoadFileRequest(new FilePathRequest(__DIR__ . '/../../Support/giga.jpeg')));
     }
 
@@ -202,7 +202,7 @@ class GigaChatServiceTest extends TestCase
         self::assertEquals('b6360f95-3272-409c-ad1a-32ec737f2952', $info->id->toString());
         self::assertEquals(5005, $info->bytes);
 
-        self::expectException(ErrorFileInfoExeption::class);
+        self::expectException(ErrorFileInfoException::class);
         $service->fileInfo(Uuid::fromString('b6360f95-3272-409c-ad1a-32ec737f2952'));
     }
 
@@ -217,7 +217,7 @@ class GigaChatServiceTest extends TestCase
         self::assertEquals('81fe1cb5-4263-4a6c-9896-8662f1d59e86', $files->files[0]->id->toString());
         self::assertEquals(5005, $files->files[0]->bytes);
 
-        self::expectException(ErrorFilesExeption::class);
+        self::expectException(ErrorFilesException::class);
         $service->files();
     }
 
@@ -229,7 +229,7 @@ class GigaChatServiceTest extends TestCase
         $stream = $service->downloadFile(Uuid::fromString('81fe1cb5-4263-4a6c-9896-8662f1d59e86'));
         self::assertInstanceOf(StreamInterface::class, $stream);
 
-        self::expectException(ErrorDownloadFilesExeption::class);
+        self::expectException(ErrorDownloadFilesException::class);
         $service->downloadFile(Uuid::fromString('b6360f95-3272-409c-ad1a-32ec737f2952'));
     }
 }

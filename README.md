@@ -326,12 +326,18 @@ class FunctionCallSubscriber implements EventSubscriberInterface
     }
 }
 ```
+## Работа с файловым хранилищем
+В разделе документации
+
+[Здесь](docs/FILES.MD)
+
+## Attachments. Добавление файлов к диалогу.
+in progress
 
 ## Tests
 Чтобы запустить интеграционные тесты укажите свои client_id и secret_id в 
 файле `phpunit.xml.dist`
 ```xml
-
 <php>
     <ini name="error_reporting" value="-1"/>
     <env name="CLIENT_ID" value="00000000-0000-0000-0000-000000000000"/>
