@@ -60,3 +60,17 @@ foreach ($files->files as $file){
 $stream = $service->downloadFile(Uuid::fromString('81fe1cb5-4263-4a6c-9896-8662f1d59e86'));
 file_put_contents('/path/to/save/file.jpg',$service->__toString());
 ```
+
+# Использование файлов в диалоге
+```php
+// получить uuid файла методами работы с хранилищем
+$dialog = new Dialog(
+Model::createGigaChatPro(),
+new Messages(new Message(0, 'Чей логотип на изображении?', Role::USER, null,
+        null, null,
+        [$data['id']] //uuid файла с purpose=general
+        )
+)
+);
+$response = $api->completions($dialog);
+```

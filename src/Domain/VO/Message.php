@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Talismanfr\GigaChat\Domain\VO;
 
+use Ramsey\Uuid\UuidInterface;
+
 final class Message implements \JsonSerializable
 {
 
     /**
      * @param string|null $name User for role function
+     * @param UuidInterface[]|string[] $attachments
      */
     public function __construct(
         private int           $index,
@@ -15,7 +18,8 @@ final class Message implements \JsonSerializable
         private Role          $role = Role::USER,
         private ?string       $functionsStateId = null,
         private ?FunctionCall $functionCall = null,
-        private ?string       $name = null
+        private ?string       $name = null,
+        private ?array        $attachments = []
     )
     {
 
@@ -72,14 +76,15 @@ final class Message implements \JsonSerializable
         return new Message(0, $content, Role::FUNCTION, null, null, $this->getFunctionCall()?->getName());
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             'role' => $this->role->value,
             'content' => $this->content,
             'function_state_id' => $this->functionsStateId,
             'function_call' => $this->functionCall,
-            'name' => $this->name
+            'name' => $this->name,
+            'attachments' => $this->attachments
         ];
     }
 }

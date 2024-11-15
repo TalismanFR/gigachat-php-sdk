@@ -12,11 +12,15 @@ use Talismanfr\GigaChat\API\Requests\EmbeddingsRequest;
 use Talismanfr\GigaChat\API\Requests\FilePathRequest;
 use Talismanfr\GigaChat\API\Requests\LoadFileRequest;
 use Talismanfr\GigaChat\API\Requests\TokensCountRequest;
+use Talismanfr\GigaChat\Domain\Entity\Dialog;
+use Talismanfr\GigaChat\Domain\Entity\Messages;
 use Talismanfr\GigaChat\Domain\VO\FewShotExample;
 use Talismanfr\GigaChat\Domain\VO\FunctionParameters;
 use Talismanfr\GigaChat\Domain\VO\FunctionProperties;
 use Talismanfr\GigaChat\Domain\VO\FunctionProperty;
+use Talismanfr\GigaChat\Domain\VO\Message;
 use Talismanfr\GigaChat\Domain\VO\Model;
+use Talismanfr\GigaChat\Domain\VO\Role;
 use Talismanfr\GigaChat\Domain\VO\Scope;
 use Talismanfr\GigaChat\Factory\DialogFactory;
 
@@ -39,10 +43,33 @@ class GigaChatApiTest extends TestCase
     public function testCompletions(GigaChatApi $api)
     {
         $factory = new DialogFactory();
-        $dialog = $factory->dialogBase('Ты эксперт в футболе.', 'Сколько должно быть игроков на поле?', Model::createGigaChatPlus());
+        $dialog = $factory->dialogBase('Ты помощник в распознавании изображений',
+            'Чей логотип на изображении?', Model::createGigaChatPlus());
         $response = $api->completions($dialog);
         self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertEquals(200, $response->getStatusCode());
+        self::assertJson($response->getBody()->__toString());
+    }
+
+    /**
+     * @param GigaChatApi $api
+     * @return void
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @depends test__construct
+     * @depends testFileInfo
+     */
+    public function testCompletionsWithFile(GigaChatApi $api, array $data)
+    {
+        $dialog = new Dialog(
+            Model::createGigaChatPro(),
+            new Messages(new Message(0, 'Чей логотип на изображении?', Role::USER, null,
+                    null, null,
+                    [$data['id']])
+            )
+        );
+        $response = $api->completions($dialog);
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertEquals(200, $response->getStatusCode(), $response->getBody()->__toString());
         self::assertJson($response->getBody()->__toString());
     }
 
@@ -125,6 +152,7 @@ class GigaChatApiTest extends TestCase
         $response = $api->fileInfo($data['id']);
         self::assertEquals(200, $response->getStatusCode());
         self::assertJson($response->getBody()->__toString());
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
