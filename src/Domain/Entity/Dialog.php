@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Talismanfr\GigaChat\Domain\Entity;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Talismanfr\GigaChat\Domain\Event\FunctionCallEvent;
 use Talismanfr\GigaChat\Domain\VO\FunctionCall;
 use Talismanfr\GigaChat\Domain\VO\FunctionModel;
@@ -16,6 +18,12 @@ use Talismanfr\GigaChat\Service\Response\CompletionResponse;
 final class Dialog implements \JsonSerializable
 {
     private ?UsageTokens $usage = null;
+
+    /** @var UuidInterface|null x-session-id */
+    private ?UuidInterface $sessionId = null;
+
+    /** @var bool Holding x-session-id */
+    private bool $holdSessionId = false;
 
     public function __construct(
         private Model                     $model,
@@ -35,6 +43,7 @@ final class Dialog implements \JsonSerializable
         if ($this->temperature < 0) {
             throw new \InvalidArgumentException('Temperature must be greater than 0');
         }
+        $this->newSessionId();
     }
 
     public function processedCompletionResponse(CompletionResponse $response): void
@@ -70,9 +79,32 @@ final class Dialog implements \JsonSerializable
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    private function newSessionId(): void
+    {
+        if (!$this->holdSessionId) {
+            $this->sessionId = Uuid::uuid4();
+        }
+    }
+
+    public function setSessionId(?UuidInterface $sessionId): void
+    {
+        $this->sessionId = $sessionId;
+    }
+
     public function addMessage(Message $message): void
     {
         $this->messages->addMessage($message);
+        $this->newSessionId();
+    }
+
+    public function getSessionId(): ?UuidInterface
+    {
+        return $this->sessionId;
+    }
+
+    public function isHoldSessionId(): bool
+    {
+        return $this->holdSessionId;
     }
 
     public function getUsage(): ?UsageTokens
@@ -124,6 +156,19 @@ final class Dialog implements \JsonSerializable
     {
         return $this->functions;
     }
+
+    public function holdSesseionId(): self
+    {
+        $this->holdSessionId = true;
+        return $this;
+    }
+
+    public function releaseSessionId(): self
+    {
+        $this->holdSessionId = false;
+        return $this;
+    }
+
 
     public function jsonSerialize(): mixed
     {

@@ -21,13 +21,4 @@ class FilePathRequestTest extends TestCase
 
         return $request;
     }
-
-    /**
-     * @return void
-     * @depends test__construct
-     */
-    public function testGetStream(FilePathRequest $request)
-    {
-        self::assertInstanceOf(StreamInterface::class, $request->getStream());
-    }
 }

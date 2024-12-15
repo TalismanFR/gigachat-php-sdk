@@ -163,7 +163,6 @@ class GigaChatApiTest extends TestCase
         $response = $api->files();
         self::assertEquals(200, $response->getStatusCode());
         self::assertJson($response->getBody()->__toString());
-        echo $response->getBody()->__toString();
     }
 
     /**

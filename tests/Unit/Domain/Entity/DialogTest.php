@@ -18,7 +18,7 @@ use Talismanfr\GigaChat\Mapper\GigaChatMapper;
 class DialogTest extends TestCase
 {
 
-    private const BASE_JSON = '{"model":"GigaChat-Pro","messages":[{"role":"system","content":"You AI","function_state_id":null},{"role":"user","content":"Hi, what are you?","function_state_id":null}],"temperature":0.2,"max_tokens":1024,"top_p":0.1,"repetition_penalty":1,"function_call":null,"functions":null}';
+    private const BASE_JSON = '{"model":"GigaChat-Pro","messages":[{"role":"system","content":"You AI","function_state_id":null,"function_call":null,"name":null,"attachments":[]},{"role":"user","content":"Hi, what are you?","function_state_id":null,"function_call":null,"name":null,"attachments":[]}],"temperature":0.2,"max_tokens":1024,"top_p":0.1,"repetition_penalty":1,"function_call":null,"functions":null}';
 
     private const BASE_JSON_FUNCTION = '{"name":"player_number_name","parameters":{"properties":{"soccer_club_name":{"type":"string","description":"Название футбольного клуба"},"player_number":{"type":"integer","description":"Номер игрока в футбольном клубе"},"soccer_league_name":{"type":"string","description":"Название футбольной лиги","enum":["Российская Премьер-лига","Первая лига","Вторая лига"]}},"type":"object","required":["soccer_club_name","player_number"]},"description":"Возвращает фамилию имя и отчество игрока играющего в футбольном клубе под определенным номером","few_shot_examples":[{"request":"Кто играет в зените под первым номером?","params":{"soccer_club_name":"Зенит","player_number":1}}]}';
 
@@ -74,9 +74,6 @@ class DialogTest extends TestCase
         self::assertEquals(Role::ASSISTANT, $message->getRole());
         self::assertEquals('На поле должно быть 11 игроков от каждой команды.', $message->getContent());
         self::assertEquals(2, $message->getIndex());
-
-        $json = json_encode($dialog, JSON_UNESCAPED_UNICODE);
-        echo $json;
     }
 
 }

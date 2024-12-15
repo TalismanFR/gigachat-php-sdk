@@ -331,8 +331,8 @@ class FunctionCallSubscriber implements EventSubscriberInterface
 
 [Здесь](docs/FILES.MD)
 
-## Attachments. Добавление файлов к диалогу.
-in progress
+## Работа с историей чата
+[Здесь](docs/HISTORY.MD)
 
 ## Tests
 Чтобы запустить интеграционные тесты укажите свои client_id и secret_id в 

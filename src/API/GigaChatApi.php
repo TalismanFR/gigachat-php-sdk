@@ -69,7 +69,8 @@ final class GigaChatApi implements GigaChatApiInterface
     {
         return $this->client->sendRequest(
             new Request('POST', self::URL_CHAT_COMPLETION, [
-                'Authorization' => 'Bearer ' . $this->auth->getAccessToken(Uuid::uuid4())->getAccessToken()
+                'Authorization' => 'Bearer ' . $this->auth->getAccessToken(Uuid::uuid4())->getAccessToken(),
+                'X-Session-ID' => $dialog->getSessionId()?->toString() ?? ''
             ],
                 json_encode($dialog, JSON_UNESCAPED_UNICODE)
             )

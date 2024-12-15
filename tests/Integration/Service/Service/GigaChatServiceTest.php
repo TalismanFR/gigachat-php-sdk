@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Talismanfr\Tests\Integration\Service\Service;
 
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\UuidInterface;
 use Talismanfr\GigaChat\API\Auth\GigaChatOAuth;
 use Talismanfr\GigaChat\API\GigaChatApi;
 use Talismanfr\GigaChat\Domain\VO\FewShotExample;
@@ -106,6 +107,28 @@ class GigaChatServiceTest extends TestCase
         self::assertCount(7, $dialog->getMessages()->getMessages());
         $message = $dialog->getMessages()->getLastMessage();
         self::assertStringContainsStringIgnoringCase('Всеволод', $message->getContent());
-        self::assertEquals($result->choices[0]->message->content, $message->getContent(), json_encode($result,JSON_UNESCAPED_UNICODE));
+        self::assertEquals($result->choices[0]->message->content, $message->getContent(), json_encode($result, JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
+     * @depends test__construct
+     */
+    public function testCompletionsWithSessionId(GigaChatService $service)
+    {
+        $factory = new DialogFactory();
+        $dialog = $factory->dialogBase('Ты эксперт в футболе.', 'Сколько должно быть игроков на поле?', Model::createGigaChatPlus());
+        $sessionId = $dialog->getSessionId();
+        self::assertInstanceOf(UuidInterface::class, $sessionId);
+        $service->completions($dialog);
+        $usage = $dialog->getUsage();
+        self::assertNotNull($usage);
+
+
+        $dialog = $factory->dialogBase('Ты эксперт в футболе.', 'Сколько должно быть игроков на поле?', Model::createGigaChatPlus());
+        $dialog->setSessionId($sessionId);
+        $service->completions($dialog);
+        $newUsage = $dialog->getUsage();
+        // запрос с кешированным session-id в теории должен поглощать меньше токенов
+        self::assertLessThan($usage->getCompletionTokens(), $newUsage->getCompletionTokens());
     }
 }
